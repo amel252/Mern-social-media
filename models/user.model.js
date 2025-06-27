@@ -46,7 +46,7 @@ const userSchema = new mongoose.Schema(
     },
     { timestamps: true }
 );
-// play function before save into dislay "block", hasher mon Mdp
+// play function before save , hasher mon Mdp
 userSchema.pre("save", async function (next) {
     const salt = await bcrypt.genSalt();
     this.password = await bcrypt.hash(this.password, salt);

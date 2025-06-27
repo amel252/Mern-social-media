@@ -81,3 +81,43 @@ module.exports.deleteUser = async (req, res) => {
         return res.status(500).json({ message: err.message });
     }
 };
+// function follow
+module.exports.follow = async (req, res) => {
+    if (!ObjectId.isValid(req.params.id))
+        return res.status(404).send("ID invalide : " + req.params.id);
+
+    if (!ObjectId.isValid(req.body.idToFollow)) {
+        return res
+            .status(404)
+            .send("ID à suivre invalide : " + req.body.idToFollow);
+    }
+    try {
+        // Ajouter à la liste des personnes que l'utilisateur suit
+        const updatedUser = await UserModel.findByIdAndUpdate(
+            req.params.id,
+            { $addToSet: { following: req.body.idToFollow } },
+            { new: true }
+        );
+
+        // Ajouter à la liste des followers de la personne suivie
+        await UserModel.findByIdAndUpdate(
+            req.body.idToFollow,
+            { $addToSet: { followers: req.params.id } },
+            { new: true }
+        );
+
+        res.status(201).json(updatedUser);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+// // function unfollow
+// module.exports.unfollow = async (req, res) => {
+//     if (!ObjectId.isValid(req.params.id))
+//         return res.status(404).send("ID invalide : " + req.params.id);
+//     try {
+//     } catch (error) {
+//         console.error("Erreur lors de la suppression :", err);
+//         return res.status(500).json({ message: err.message });
+//     }
+// };

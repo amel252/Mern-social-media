@@ -1,5 +1,6 @@
 const UserModel = require("../models/user.model");
 
+//
 module.exports.signUp = async (req, res) => {
     const { pseudo, email, password } = req.body;
     // body-parser : un middleware pour Express qui permet de lire et traiter les données envoyées dans le corps des requêtes HTTP
