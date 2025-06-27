@@ -111,13 +111,33 @@ module.exports.follow = async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 };
-// // function unfollow
-// module.exports.unfollow = async (req, res) => {
-//     if (!ObjectId.isValid(req.params.id))
-//         return res.status(404).send("ID invalide : " + req.params.id);
-//     try {
-//     } catch (error) {
-//         console.error("Erreur lors de la suppression :", err);
-//         return res.status(500).json({ message: err.message });
-//     }
-// };
+// function unfollow
+module.exports.unfollow = async (req, res) => {
+    if (!ObjectId.isValid(req.params.id))
+        return res.status(404).send("ID invalide : " + req.params.id);
+    if (!ObjectId.isValid(req.body.idToUnFollow)) {
+        return res
+            .status(404)
+            .send("ID à suivre invalide : " + req.body.idToUnFollow);
+    }
+    try {
+        // supp à la liste des personnes que l'utilisateur suit
+        const updatedUser = await UserModel.findByIdAndUpdate(
+            req.params.id,
+            { $pull: { following: req.body.idToUnFollow } },
+            { new: true }
+        );
+
+        // supp à la liste des followers de la personne suivie
+        await UserModel.findByIdAndUpdate(
+            req.body.idToUnFollow,
+            { $pull: { followers: req.params.id } },
+            { new: true }
+        );
+
+        res.status(201).json(updatedUser);
+    } catch (error) {
+        console.error("Erreur lors de la suppression :", err);
+        return res.status(500).json({ message: err.message });
+    }
+};
