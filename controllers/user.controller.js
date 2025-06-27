@@ -61,3 +61,23 @@ module.exports.updateUser = async (req, res) => {
         return res.status(500).json({ message: err });
     }
 };
+
+// delete user
+module.exports.deleteUser = async (req, res) => {
+    if (!ObjectId.isValid(req.params.id))
+        return res.status(404).send("ID invalide : " + req.params.id);
+
+    try {
+        // Supprime l'utilisateur par son ID
+        const deletedUser = await UserModel.findByIdAndDelete(req.params.id);
+
+        if (!deletedUser) {
+            return res.status(404).json({ message: "Utilisateur non trouvé" });
+        }
+        // Réponse réussie après suppression
+        res.status(200).json({ message: "Utilisateur supprimé avec succès" });
+    } catch (err) {
+        console.error("Erreur lors de la suppression :", err);
+        return res.status(500).json({ message: err.message });
+    }
+};
