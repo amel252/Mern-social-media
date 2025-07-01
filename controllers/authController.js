@@ -1,5 +1,7 @@
+const { Error } = require("mongoose");
 const UserModel = require("../models/user.model");
 const jwt = require("jsonwebtoken");
+const { signUpErrors, signInErrors } = require("../utils/errors.utils");
 
 const maxAge = 3 * 24 * 60 * 60 * 1000;
 const createToken = (id) => {
@@ -21,12 +23,12 @@ module.exports.signUp = async (req, res) => {
     try {
         const user = await UserModel.create({ pseudo, email, password });
         res.status(201).json({ user: user._id });
-    } catch (error) {
-        console.error(error); // Pour voir l'erreur dans la console serveur
-        res.status(500).json({ error: error.message });
+    } catch (err) {
+        const errors = signUpErrors(err);
+        console.error(err); // Pour voir l'erreur dans la console serveur
+        res.status(500).json({ errors });
     }
 };
-
 // function signIn (connexion ):
 module.exports.signIn = async (req, res) => {
     const { email, password } = req.body;
@@ -42,8 +44,9 @@ module.exports.signIn = async (req, res) => {
             message: "Utilisateur connecté",
             user: user._id,
         });
-    } catch (error) {
-        res.status(401).json({ message: error.message });
+    } catch (err) {
+        const errors = signInErrors(err);
+        res.status(401).json({ message: err.message });
     }
 };
 module.exports.logout = (req, res) => {
