@@ -3,7 +3,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 // const bodyParser = require("body-parser"); plus utilisé
-const userRoutes = require("./routes/user.route");
+const userRoutes = require("./routes/user.routes");
+const postRoutes = require("./routes/post.routes");
 // Tu charges les variables d’environnement depuis le fichier .env situé dans le dossier config/.
 require("dotenv").config({ path: "./config/.env" });
 const { checkUser, requireAuth } = require("./middleware/auth.middleware");
@@ -33,6 +34,7 @@ mongoose
 
 // les routes :
 app.use("/api/user", userRoutes);
+app.use("/api/post", postRoutes);
 
 //Tu dis à Express de démarrer le serveur sur le port 5000./ toujours  a la fin
 app.listen(process.env.PORT, () => {
