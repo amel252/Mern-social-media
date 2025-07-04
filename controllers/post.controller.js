@@ -92,3 +92,69 @@ module.exports.deletePost = async (req, res) => {
         return res.status(500).send("Erreur serveur lors de la suppression");
     }
 };
+module.exports.likePost = async (req, res) => {
+    if (!ObjectId.isValid(req.params.id)) {
+        return res.status(400).send("ID inconnu : " + req.params.id);
+    }
+
+    try {
+        const likedPost = await PostModel.findByIdAndUpdate(
+            req.params.id,
+            {
+                $addToSet: { likers: req.body.id },
+            },
+            { new: true }
+        ).populate("likers", "pseudo email");
+
+        if (!likedPost) {
+            return res.status(404).json({ message: "Post non trouvé" });
+        }
+
+        await UserModel.findByIdAndUpdate(
+            req.body.id,
+            {
+                $addToSet: { likes: req.params.id }, // ajoute le post au tableau des likes de l'utilisateur
+            },
+            { new: true }
+        );
+
+        res.status(200).json(likedPost);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+module.exports.unlikePost = async (req, res) => {
+    if (!ObjectId.isValid(req.params.id)) {
+        return res.status(400).send("ID inconnu : " + req.params.id);
+    }
+
+    try {
+        const likedPost = await PostModel.findByIdAndUpdate(
+            req.params.id,
+            {
+                $pull: { likers: req.body.id },
+            },
+            { new: true }
+        ).populate("likers", "pseudo email");
+
+        if (!likedPost) {
+            return res.status(404).json({ message: "Post non trouvé" });
+        }
+
+        await UserModel.findByIdAndUpdate(
+            req.body.id,
+            {
+                $pull: { likes: req.params.id }, // supprime le post au tableau des likes de l'utilisateur
+            },
+            { new: true }
+        );
+
+        res.status(200).json(likedPost);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+module.exports.commentPost = async (req, res) => {};
+module.exports.editCommentPost = async (req, res) => {};
+module.exports.deleteCommentPost = async (req, res) => {};

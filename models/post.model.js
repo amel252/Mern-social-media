@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
-const PostSchema = new mongoose.Schema(
+const UserModel = require("../models/user.model");
+
+const postSchema = new mongoose.Schema(
     {
         postId: {
             type: String,
@@ -16,24 +18,23 @@ const PostSchema = new mongoose.Schema(
         video: {
             type: String,
         },
-        likers: {
-            type: [String],
-            required: true,
-        },
-        comments: {
-            type: [
-                {
-                    commentairerId: String,
-                    commentairePseudo: String,
-                    text: String,
-                    timestamps: Number,
-                },
-            ],
-            required: true,
-        },
+        likers: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "User",
+            },
+        ],
+        comments: [
+            {
+                commenterId: String,
+                commenterPseudo: String,
+                text: String,
+                timestamp: Number,
+            },
+        ],
     },
     {
         timestamps: true,
     }
 );
-module.exports = mongoose.model("post", PostSchema);
+module.exports = mongoose.model("Post", postSchema);

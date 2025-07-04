@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+
 // on va appellé cette function qui va controller le mail
 const { isEmail } = require("validator");
 const bcrypt = require("bcrypt");
@@ -41,9 +42,12 @@ const userSchema = new mongoose.Schema(
         following: {
             type: [String],
         },
-        likes: {
-            type: [String],
-        },
+        likes: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Post",
+            },
+        ],
     },
     { timestamps: true }
 );
@@ -76,6 +80,6 @@ userSchema.statics.login = async function (email, password) {
     throw Error("email incorreste");
 };
 
-const UserModel = mongoose.model("user", userSchema);
+const UserModel = mongoose.model("User", userSchema);
 
 module.exports = UserModel;
