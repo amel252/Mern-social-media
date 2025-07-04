@@ -155,6 +155,87 @@ module.exports.unlikePost = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
-module.exports.commentPost = async (req, res) => {};
-module.exports.editCommentPost = async (req, res) => {};
-module.exports.deleteCommentPost = async (req, res) => {};
+module.exports.commentPost = async (req, res) => {
+    if (!ObjectId.isValid(req.params.id)) {
+        return res.status(400).send("ID invalide : " + req.params.id);
+    }
+
+    try {
+        const updatedPost = await PostModel.findByIdAndUpdate(
+            req.params.id,
+            {
+                $push: {
+                    comments: {
+                        commenterId: req.body.commenterId,
+                        commenterPseudo: req.body.commenterPseudo,
+                        text: req.body.text,
+                        timestamp: new Date().getTime(),
+                    },
+                },
+            },
+            { new: true }
+        );
+
+        if (!updatedPost) {
+            return res.status(404).send("Post non trouvé");
+        }
+
+        return res.status(200).json(updatedPost);
+    } catch (err) {
+        console.error("Erreur dans commentPost :", err.message);
+        return res.status(500).send("Erreur serveur");
+    }
+};
+
+module.exports.editCommentPost = async (req, res) => {
+    if (!ObjectId.isValid(req.params.id)) {
+        return res.status(400).json({ message: "ID invalide" });
+    }
+    //l’id du post (dans l’URL → req.params.id) / l’id du commentaire (dans le body → req.body.commentId)
+    try {
+        // Récupérer le post par ID
+        const post = await PostModel.findById(req.params.id);
+        if (!post) return res.status(404).send("Post non trouvé");
+
+        // Chercher le commentaire à modifier
+        const comment = post.comments.find((comment) =>
+            comment._id.equals(req.body.commentId)
+        );
+        if (!comment) return res.status(404).send("Commentaire non trouvé");
+
+        // Modifier le texte du commentaire
+        comment.text = req.body.text;
+
+        // Sauvegarder le post avec le commentaire modifié
+        const updatedPost = await post.save();
+
+        // Répondre avec le post mis à jour
+        return res.status(200).json(updatedPost);
+    } catch (err) {
+        return res.status(500).send(err.message);
+    }
+};
+module.exports.deleteCommentPost = async (req, res) => {
+    if (!ObjectId.isValid(req.params.id)) {
+        return res.status(400).json({ message: "ID invalide" });
+    }
+
+    try {
+        const updatedPost = await PostModel.findByIdAndUpdate(
+            req.params.id,
+            {
+                $pull: {
+                    comments: { _id: req.body.commentId },
+                },
+            },
+            { new: true }
+        );
+
+        if (!updatedPost)
+            return res.status(404).json({ message: "Post non trouvé" });
+
+        return res.status(200).json(updatedPost);
+    } catch (err) {
+        return res.status(500).send(err.message);
+    }
+};
