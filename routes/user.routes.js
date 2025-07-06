@@ -1,8 +1,9 @@
 const router = require("express").Router();
 const authController = require("../controllers/authController");
 const userController = require("../controllers/user.controller");
-const multer = require("multer");
-const upload = multer();
+const uploadController = require("../controllers/upload.controller");
+const upload = require("../middleware/multer");
+// const multer = require("multer");
 
 // auth
 router.post("/register", authController.signUp);
@@ -19,7 +20,11 @@ router.delete("/:id/", userController.deleteUser);
 router.patch("/follow/:id", userController.follow);
 router.patch("/unfollow/:id", userController.unfollow);
 
-// upload
-router.post("/upload", upload.single("file"), uploadController.uploadProfil);
+// Route d'upload d'une photo de profil
+router.post(
+    "/upload-avatar",
+    upload.single("avatar"),
+    uploadController.uploadAvatar
+);
 
 module.exports = router;

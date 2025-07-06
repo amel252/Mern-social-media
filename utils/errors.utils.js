@@ -29,3 +29,13 @@ module.exports.signInErrors = (err) => {
         errors.password = "le mot de passe ne correspond pas  ";
     return errors;
 };
+
+// le  traitement et msg d'erreur (corrigé)
+module.exports.uploadErrors = (err) => {
+    let errors = { format: "", maxSize: "" };
+    if (err.message.includes("invalid file"))
+        errors.format = "Format imcompatible (jpg, jpeg, png seulement)";
+    if (err.message.includes("max size"))
+        errors.maxSize = "Le fichier dépasse 550ko";
+    return errors;
+};
