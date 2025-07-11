@@ -1,47 +1,48 @@
 const UserModel = require("../models/user.model");
 const fs = require("fs");
 const { promisify } = require("util");
-const { pipeline } = require("stream/promises");
+const pipeline = promisify(require("stream").pipeline);
 const { uploadErrors } = require("../utils/errors.utils");
+const path = require("path");
 
 module.exports.uploadAvatar = async (req, res) => {
     try {
-        // on fait les condition pour le format de l'img
+        // 1. Vérification des erreurs
         if (
-            req.file.mimetype !== "image/jpg" &&
-            req.file.mimetype !== "image/png" &&
-            req.file.mimetype !== "image/jpeg"
-        )
-            throw Error("invalid file");
-        if (!req.file.mimetype.startsWith("image/")) {
-            // Pour accepter toutes les images de type jpeg, png, etc.
-            throw Error("invalid file");
-        }
-        // on fait les condition pour la taille de l'img
-        if (req.file.size > 500000) throw Error("max size");
-        // quand il mettra a jour sa photo , on aura pas besoin de la supp , la nouvelle photo vient ecrassé l'ancienne(meme nom)
-        // il sert à enregistrer un fichier uploadé
-        // On crée le nom de fichier en gardant l'extension d'origine
-        const fileName = req.body.name + path.extname(req.file.originalname);
+            req.file.detectedMimeType !== "image/png" &&
+            req.file.detectedMimeType !== "image/jpeg"
+        ) throw Error("invalid file");
 
-        // On enregistre le fichier dans le dossier uploads/profil
-        await pipeline(
-            req.file.stream,
-            fs.createWriteStream(
-                path.join(
-                    __dirname,
-                    "../client/public/uploads/profil",
-                    fileName
-                )
-            )
+        if (req.file.size > 500000) throw Error("max size");
+
+        // 2. Générer un nom de fichier sûr
+        const extension = path.extname(req.file.originalname); // ex: .jpg ou .png
+        const fileName = `${req.body.userId}${extension}`;
+
+        const filePath = path.join(__dirname, "../client/public/uploads/profil", fileName);
+
+        // 3. Supprimer l’ancienne image si elle existe
+        const user = await UserModel.findById(req.body.userId);
+        if (user.picture) {
+            const oldPath = path.join(__dirname, "../client/public", user.picture);
+            if (fs.existsSync(oldPath)) {
+                await fs.promises.unlink(oldPath);
+            }
+        }
+
+        // 4. Enregistrer la nouvelle image
+        await pipeline(req.file.stream, fs.createWriteStream(filePath));
+
+        // 5. Mettre à jour la BDD
+        const updatedUser = await UserModel.findByIdAndUpdate(
+            req.body.userId,
+            { $set: { picture: "/uploads/profil/" + fileName } },
+            { new: true, upsert: true, setDefaultsOnInsert: true }
         );
-        // Envoie une réponse succès
-        res.status(200).json({
-            message: "Photo uploadée avec succès",
-            fileName,
-        });
+
+        return res.status(200).send(updatedUser);
     } catch (err) {
         const errors = uploadErrors(err);
-        return res.status(400).json(errors);
+        return res.status(400).json({ errors });
     }
 };

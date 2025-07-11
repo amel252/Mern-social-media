@@ -7,9 +7,8 @@ const storage = multer.diskStorage({
     },
     filename: (req, file, cb) => {
         const ext = path.extname(file.originalname); // .jpg, .png, etc.
-        const filename =
-            Date.now() + "-" + Math.round(Math.random() * 1e9) + ext;
-        cb(null, Date.now() + "-" + file.originalname); // nom du fichier
+        const name = file.originalname.split(".")[0]; // sans extension
+        cb(null, Date.now() + "-" + name + ext);
     },
 });
 
