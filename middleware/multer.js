@@ -1,9 +1,9 @@
 const multer = require("multer");
 const path = require("path");
 
-const storage = multer.diskStorage({
+const avatarStorage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, "client/public/uploads/profil"); // dossier où les fichiers seront enregistrés
+        cb(null, "client/public/uploads/profil"); // dossier où seront stockées les images
     },
     filename: (req, file, cb) => {
         const ext = path.extname(file.originalname); // .jpg, .png, etc.
@@ -12,7 +12,18 @@ const storage = multer.diskStorage({
     },
 });
 
-// Filtre pour autoriser uniquement certains types de fichiers
+// === Storage pour les posts ===
+const postStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "client/public/uploads/posts"); // dossier où seront stockées les images
+    },
+    filename: (req, file, cb) => {
+        const ext = path.extname(file.originalname);
+        const name = file.originalname.split(".")[0];
+        cb(null, `${Date.now()}-${name}${ext}`);
+    },
+});
+// Filtre pour autoriser uniquement certains types de fichiers , Filtre commun ===
 const fileFilter = (req, file, cb) => {
     const allowedTypes = /jpeg|jpg|png|gif/;
     const isExtValid = allowedTypes.test(
@@ -31,13 +42,20 @@ const fileFilter = (req, file, cb) => {
     }
 };
 
-// Middleware multer final
-// Middleware multer final
-const upload = multer({
-    storage,
+// === Exporter deux middlewares distincts ===
+const uploadAvatar = multer({
+    storage: avatarStorage,
     fileFilter,
-    limits: { fileSize: 500000 }, // ⚠️ 500ko max
+    limits: { fileSize: 500000 }, // 500ko
 });
 
+const uploadPost = multer({
+    storage: postStorage,
+    fileFilter,
+    limits: { fileSize: 500000 }, // 500ko
+});
 
-module.exports = upload;
+module.exports = {
+    uploadAvatar,
+    uploadPost,
+};

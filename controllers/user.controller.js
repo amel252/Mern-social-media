@@ -12,6 +12,17 @@ module.exports.getAllUsers = async (req, res) => {
         res.status(500).send("Erreur serveur.");
     }
 };
+// la récupération d’un seul utilisateur :
+module.exports.getUserById = async (req, res) => {
+  try {
+    const user = await UserModel.findById(req.params.id).select("-password");
+    if (!user) return res.status(404).json({ message: "Utilisateur non trouvé" });
+    res.status(200).json(user);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Erreur serveur" });
+  }
+};
 
 // chercher les infos d'un seul utilisateur à partir de son ID.
 module.exports.userInfo = async (req, res) => {

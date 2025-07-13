@@ -37,7 +37,7 @@ module.exports.readOnePost = async (req, res) => {
 
 // function pour créer les posts
 module.exports.createPost = async (req, res) => {
-    let fileName;
+    let picturePath = "";
     if (req.file) {
         try {
             if (
@@ -48,22 +48,25 @@ module.exports.createPost = async (req, res) => {
                 throw Error("invalid file");
 
             if (req.file.size > 500000) throw Error("max size");
+
+            picturePath = "/uploads/profil/" + req.file.filename;
         } catch (error) {
             const errors = uploadErrors(error);
             return res.status(400).json({ errors });
-
         }
-        fileName = req.body.posterId + Date.now() + '.jpg';
-        await pipeline(
-            req.file.stream,
-            fs.createWriteStream(`${__dirname}/../client/public/uploads/posts/${fileName}`)
-        )
     }
+    const { posterId, message, video } = req.body;
+
+    if (!posterId) {
+    return res.status(400).json({ message: "posterId manquant" });
+    }
+
+
     const newPost = new PostModel({
         posterId: req.body.posterId,
         message: req.body.message,
         video: req.body.video,
-        picture: req.file ? "/uploads/posts/" + fileName : "",
+        picture: picturePath,
         likers: [],
         comments: [],
     });
@@ -73,6 +76,7 @@ module.exports.createPost = async (req, res) => {
     } catch (err) {
         return res.status(400).send(err);
     }
+
 };
 // faire la function pour mettre a jour le post
 module.exports.updatePost = async (req, res) => {

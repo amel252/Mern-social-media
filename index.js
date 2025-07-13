@@ -34,8 +34,7 @@ app.use(
 
 // le lien de mongoose avec le bdd atlas
 mongoose
-    .connect(process.env.MONGO)
-
+    .connect(process.env.MONGO_URI)
     .then(() => console.log("Connexion à MongoDB Atlas réussie ✅ !"))
     .catch((err) => {
         console.error(" Erreur de connexion à MongoDB  ❌ :", err.message);

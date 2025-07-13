@@ -3,7 +3,7 @@ const UserModel = require("../models/user.model");
 
 const postSchema = new mongoose.Schema(
     {
-        postId: {
+        posterId: {
             type: String,
             requirede: true,
         },
@@ -37,4 +37,4 @@ const postSchema = new mongoose.Schema(
         timestamps: true,
     }
 );
-module.exports = mongoose.model("Post", postSchema);
+module.exports = mongoose.model("post", postSchema);
