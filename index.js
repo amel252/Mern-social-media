@@ -8,12 +8,25 @@ const postRoutes = require("./routes/post.routes");
 // Tu charges les variables d’environnement depuis le fichier .env situé dans le dossier config/.
 require("dotenv").config({ path: "./config/.env" });
 const { checkUser, requireAuth } = require("./middleware/auth.middleware");
+const cors = require("cors")
 // crées une instance de l’application Express , sur (app) que tu vas :définir des routes (app.get, app.post), ajouter des middlewares (app.use(...)) , connecter à une base de données, etc.
 const app = express();
 const path = require("path");
 
 // Cookie parser → DOIT être avant les middlewares qui lisent les cookies
 app.use(cookieParser());
+
+//cors et spécifié qui a le droit  pulbié
+const corsOptions = {
+    origin: process.env.CLIENT_URL,
+    credentials: true,
+    'allowedHeaders': ['sessionId', 'Content-Type'],
+    'exposedHeaders': ['sessionId'],
+    'methods': 'GET,HEAD, PATCH, POST, DELETE',
+    'preflightContinue': false
+
+}
+app.use(cors({ corsOptions }));
 
 // Middleware auth → ici c'est safe maintenant
 app.use(checkUser);
@@ -22,9 +35,10 @@ app.get("/jwtid", requireAuth, (req, res) => {
     res.status(200).send(res.locals.user._id);
 });
 
-//Body-parser remplacer par :
+//Body-parser remplacer par express:
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 
 // pour l'img avatar, // Serve les fichiers statiques (images)
 app.use(
