@@ -21,6 +21,31 @@ router.patch("/follow/:id", userController.follow);
 router.patch("/unfollow/:id", userController.unfollow);
 
 // Route d'upload d'une photo de profil
-router.post("/upload", upload.single("file"), uploadController.uploadAvatar);
+router.post("/upload", (req, res) => {
+  upload.single("file")(req, res, function (err) {
+    if (err instanceof multer.MulterError) {
+      // 📛 erreur multer (taille)
+      if (err.code === "LIMIT_FILE_SIZE") {
+        return res.status(400).json({
+          errors: {
+            format: "",
+            maxSize: "Le fichier dépasse 500ko",
+          },
+        });
+      }
+    } else if (err) {
+      // 📛 autre erreur (mauvais format, etc.)
+      return res.status(400).json({
+        errors: {
+          format: err.message,
+          maxSize: "",
+        },
+      });
+    }
+
+    // ✅ Tout est bon, on passe au contrôleur
+    uploadController.uploadAvatar(req, res);
+  });
+});
 
 module.exports = router;

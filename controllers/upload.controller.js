@@ -13,20 +13,12 @@ module.exports.uploadAvatar = async (req, res) => {
         )
             throw Error("invalid file");
 
-        // if (!["image/png", "image/jpeg", "image/jpg"].includes(req.file.mimetype)) {
-        // throw Error("invalid file");
-        // }
-
-
         if (req.file.size > 500000) throw Error("max size");
 
         // 2. Générer un nom de fichier sûr
-          const extension = path.extname(req.file.originalname);
+        const extension = path.extname(req.file.originalname);
         const newFileName = `${req.body.userId}${extension}`;
         const newPath = path.join(req.file.destination, newFileName);
-
-        // const filePath = path.join(__dirname, "../client/public/uploads/profil", fileName);
-
 
 
         // 3.

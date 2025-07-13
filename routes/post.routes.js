@@ -1,10 +1,12 @@
 const router = require("express").Router();
 const postController = require("../controllers/post.controller");
+const upload = require("../middleware/multer");
+const multer = require("multer");
 
 // faire 4 function pour le crud
 
 router.get("/", postController.readAllPosts);
-router.post("/", postController.createPost);
+router.post("/",upload.single("file"), postController.createPost);
 router.put("/:id", postController.updatePost);
 router.delete("/:id", postController.deletePost);
 

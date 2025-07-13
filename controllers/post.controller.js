@@ -1,6 +1,9 @@
 const PostModel = require("../models/post.model");
 const UserModel = require("../models/user.model");
 const ObjectId = require("mongoose").Types.ObjectId;
+const fs = require("fs");
+const { uploadErrors } = require("../utils/errors.utils");
+const { pipeline } = require("stream/promises");
 
 // function pour lire les posts
 module.exports.readAllPosts = async (req, res) => {
@@ -34,10 +37,33 @@ module.exports.readOnePost = async (req, res) => {
 
 // function pour créer les posts
 module.exports.createPost = async (req, res) => {
+    let fileName;
+    if (req.file) {
+        try {
+            if (
+                req.file.mimetype !== "image/png" &&
+                req.file.mimetype !== "image/gif" &&
+                req.file.mimetype !== "image/jpeg"
+            )
+                throw Error("invalid file");
+
+            if (req.file.size > 500000) throw Error("max size");
+        } catch (error) {
+            const errors = uploadErrors(error);
+            return res.status(400).json({ errors });
+
+        }
+        fileName = req.body.posterId + Date.now() + '.jpg';
+        await pipeline(
+            req.file.stream,
+            fs.createWriteStream(`${__dirname}/../client/public/uploads/posts/${fileName}`)
+        )
+    }
     const newPost = new PostModel({
         posterId: req.body.posterId,
         message: req.body.message,
         video: req.body.video,
+        picture: req.file ? "/uploads/posts/" + fileName : "",
         likers: [],
         comments: [],
     });
@@ -194,8 +220,8 @@ module.exports.editCommentPost = async (req, res) => {
     //l’id du post (dans l’URL → req.params.id) / l’id du commentaire (dans le body → req.body.commentId)
     try {
         // Récupérer le post par ID
-        const post = await PostModel.findById(req.params.id);
-        if (!post) return res.status(404).send("Post non trouvé");
+        // const post = await PostModel.findById(req.params.id);
+        // if (!post) return res.status(404).send("Post non trouvé");
 
         // Chercher le commentaire à modifier
         const comment = post.comments.find((comment) =>
