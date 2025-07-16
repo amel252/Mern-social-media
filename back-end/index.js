@@ -3,12 +3,15 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 // const bodyParser = require("body-parser"); plus utilisé
-const userRoutes = require("./routes/user.routes");
-const postRoutes = require("./routes/post.routes");
+const userRoutes = require("../back-end/routes/user.routes");
+const postRoutes = require("../back-end/routes/post.routes");
 // Tu charges les variables d’environnement depuis le fichier .env situé dans le dossier config/.
-require("dotenv").config({ path: "./config/.env" });
-const { checkUser, requireAuth } = require("./middleware/auth.middleware");
-const cors = require("cors")
+require("dotenv").config({ path: "../back-end/config/.env" });
+const {
+    checkUser,
+    requireAuth,
+} = require("../back-end/middleware/auth.middleware");
+const cors = require("cors");
 // crées une instance de l’application Express , sur (app) que tu vas :définir des routes (app.get, app.post), ajouter des middlewares (app.use(...)) , connecter à une base de données, etc.
 const app = express();
 const path = require("path");
@@ -20,12 +23,11 @@ app.use(cookieParser());
 const corsOptions = {
     origin: process.env.CLIENT_URL,
     credentials: true,
-    'allowedHeaders': ['sessionId', 'Content-Type'],
-    'exposedHeaders': ['sessionId'],
-    'methods': 'GET,HEAD, PATCH, POST, DELETE',
-    'preflightContinue': false
-
-}
+    allowedHeaders: ["sessionId", "Content-Type"],
+    exposedHeaders: ["sessionId"],
+    methods: "GET,HEAD, PATCH, POST, DELETE",
+    preflightContinue: false,
+};
 app.use(cors({ corsOptions }));
 
 // Middleware auth → ici c'est safe maintenant
@@ -38,7 +40,6 @@ app.get("/jwtid", requireAuth, (req, res) => {
 //Body-parser remplacer par express:
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
 
 // pour l'img avatar, // Serve les fichiers statiques (images)
 app.use(

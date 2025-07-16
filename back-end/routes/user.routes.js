@@ -2,6 +2,7 @@ const router = require("express").Router();
 const authController = require("../controllers/authController");
 const userController = require("../controllers/user.controller");
 const uploadController = require("../controllers/upload.controller");
+// const { uploadAvatar } = require("../middleware/multer");
 const { uploadAvatar } = require("../middleware/multer");
 const multer = require("multer");
 
@@ -22,6 +23,14 @@ router.patch("/follow/:id", userController.follow);
 router.patch("/unfollow/:id", userController.unfollow);
 
 // Route d'upload d'une photo de profil
+// router.post("/upload-avatar", uploadAvatar.single("file"), async (req, res) => {
+//     if (!req.file) {
+//         return res.status(400).json({ error: "Aucun fichier reçu." });
+//     }
+
+//     console.log("Fichier reçu :", req.file.mimetype);
+//     res.status(200).json({ message: "Avatar uploadé avec succès" });
+// });
 router.post("/upload-Avatar", (req, res) => {
     uploadAvatar.single("file")(req, res, function (err) {
         if (err instanceof multer.MulterError) {

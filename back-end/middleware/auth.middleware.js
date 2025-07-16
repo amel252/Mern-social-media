@@ -6,7 +6,7 @@ module.exports.checkUser = (req, res, next) => {
     // On récupère le token JWT qui a été stocké dans les cookies au moment du login, Ce token contient l’id utilisateur
     const token = req.cookies.jwt;
     if (token) {
-        jtw.verify(
+        jwt.verify(
             // Cette méthode vérifie si le token est valide
             token,
             process.env.TOKEN_SECRET,
