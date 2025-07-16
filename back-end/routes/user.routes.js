@@ -12,7 +12,7 @@ router.get("/logout", authController.logout);
 
 // user DB
 router.get("/", userController.getAllUsers);
-router.get("/:id",userController.getUserById)
+router.get("/:id", userController.getUserById);
 // quand tu soit sur get:id tu aller sur userController et me chercher function userInfo
 router.get("/:id", userController.userInfo);
 router.put("/:id/", userController.updateUser);
@@ -23,30 +23,30 @@ router.patch("/unfollow/:id", userController.unfollow);
 
 // Route d'upload d'une photo de profil
 router.post("/upload-Avatar", (req, res) => {
-  uploadAvatar.single("file")(req, res, function (err) {
-    if (err instanceof multer.MulterError) {
-      // 📛 erreur multer (taille)
-      if (err.code === "LIMIT_FILE_SIZE") {
-        return res.status(400).json({
-          errors: {
-            format: "",
-            maxSize: "Le fichier dépasse 500ko",
-          },
-        });
-      }
-    } else if (err) {
-      // 📛 autre erreur (mauvais format, etc.)
-      return res.status(400).json({
-        errors: {
-          format: err.message,
-          maxSize: "",
-        },
-      });
-    }
+    uploadAvatar.single("file")(req, res, function (err) {
+        if (err instanceof multer.MulterError) {
+            // 📛 erreur multer (taille)
+            if (err.code === "LIMIT_FILE_SIZE") {
+                return res.status(400).json({
+                    errors: {
+                        format: "",
+                        maxSize: "Le fichier dépasse 500ko",
+                    },
+                });
+            }
+        } else if (err) {
+            // 📛 autre erreur (mauvais format, etc.)
+            return res.status(400).json({
+                errors: {
+                    format: err.message,
+                    maxSize: "",
+                },
+            });
+        }
 
-    // ✅ Tout est bon, on passe au contrôleur
-    uploadController.uploadAvatar(req, res);
-  });
+        // ✅ Tout est bon, on passe au contrôleur
+        uploadController.uploadAvatar(req, res);
+    });
 });
 
 module.exports = router;
