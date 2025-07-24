@@ -77,7 +77,7 @@ userSchema.statics.login = async function (email, password) {
         throw Error("password incorrecte ");
     }
     // Si aucun utilisateur n'est trouvé avec l’email donné, une erreur personnalisée est renvoyée : "email incorrect".
-    throw Error("email incorreste");
+    throw Error("email incorrect");
 };
 
 const UserModel = mongoose.model("User", userSchema);

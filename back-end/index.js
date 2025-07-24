@@ -28,7 +28,13 @@ const corsOptions = {
     methods: "GET,HEAD, PATCH, POST, DELETE",
     preflightContinue: false,
 };
-app.use(cors({ corsOptions }));
+app.use(
+    cors({
+        corsOptions,
+        origin: "http://localhost:5173", // ← ou l'URL de ton front
+        credentials: true,
+    })
+);
 
 // Middleware auth → ici c'est safe maintenant
 app.use(checkUser);

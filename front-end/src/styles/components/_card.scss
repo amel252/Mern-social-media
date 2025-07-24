@@ -1,7 +1,8 @@
+@use "../settings" as settings;
 .card-container {
     display: grid;
     grid-template-columns: 66px 1fr;
-    border: 2px solid $color-2;
+    border: 2px solid settings.$color-2;
     margin: 10px;
     padding: 16px;
     border-radius: 20px;
@@ -21,7 +22,7 @@
         top: 40%;
         left: 49%;
         font-size: 1.5rem;
-        color: $color-1;
+        color: settings.$color-1;
     }
 
     .card-left {
@@ -94,17 +95,17 @@
                     }
 
                     .fas {
-                        color: $color-1;
+                        color: settings.$color-1;
                     }
                     .far {
-                        color: $color-2;
+                        color: settings.$color-2;
                     }
                 }
             }
 
             span {
                 font-style: italic;
-                font-family: $font-1;
+                font-family: settings.$font-1;
 
                 @media screen and (max-width: 440px) {
                     transform: translate(52px, -20px);
@@ -122,18 +123,18 @@
         .update-post {
             textarea {
                 font-size: 1.3rem;
-                border: 1px solid $color-2;
+                border: 2px solid settings.$color-2;
                 padding: 10px;
                 border-radius: 20px 20px 6px 20px;
             }
             .button-container {
                 .btn {
-                    background: $color-2;
+                    background: settings.$color-2;
                     width: 240px;
                     transform: translateY(-3px);
 
                     &:hover {
-                        background: $color-1;
+                        background: settings.$color-1;
                         width: 250px;
                         letter-spacing: 1px;
                     }
@@ -159,7 +160,7 @@
             div {
                 padding: 5px 9px;
                 margin-left: 5px;
-                background: $color-2;
+                background: settings.$color-2;
                 border-radius: 50px;
                 transition: 0.1s;
                 cursor: pointer;
@@ -205,14 +206,14 @@
             }
         }
         .comment-container.client {
-            background: $color-4;
+            background: settings.$color-4;
             border: none;
             border-radius: 20px 20px 6px 20px;
         }
         .comment-container {
             display: grid;
             grid-template-columns: 50px 1fr;
-            border: 1px solid $color-2;
+            border: 1px solid settings.$color-2;
             padding: 15px;
             margin: 5px 0;
             border-radius: 20px 20px 20px 6px;
@@ -241,7 +242,7 @@
                     display: flex;
 
                     h3 {
-                        font-family: $font-1;
+                        font-family: settings.$font-1;
                     }
                     span {
                         transform: translateX(6px);
@@ -251,14 +252,14 @@
                 span {
                     font-size: 0.9rem;
                     font-style: italic;
-                    font-family: $font-1;
+                    font-family: settings.$font-1;
                 }
             }
             p {
                 margin-top: 8px;
             }
             .edit-comment {
-                color: $color-2;
+                color: settings.$color-2;
                 img {
                     float: right;
                     margin-left: 10px;
@@ -276,14 +277,14 @@
                 .edit-comment-form {
                     margin-top: 14px;
                     label {
-                        background: $white;
-                        color: $color-1;
+                        background: settings.$white;
+                        color: settings.$color-1;
                         padding: 6px 12px 5px;
                         border-radius: 20px 20px 20px 6px;
                         cursor: pointer;
                         transition: 0.2s;
                         display: inline-block;
-                        font-family: $font-3;
+                        font-family: settings.$font-3;
 
                         &:hover {
                             transform: scale(1.05);
@@ -291,7 +292,7 @@
                     }
                     input[type="text"] {
                         margin: 4px 0;
-                        background: $white;
+                        background: settings.$white;
                         font-size: 1.15rem;
                         padding: 16px;
                         width: 100%;
@@ -303,7 +304,7 @@
                         float: right;
 
                         span {
-                            background: $white;
+                            background: settings.$white;
                             padding: 10px 5px;
                             border-radius: 50px;
                             margin-right: 6px;
@@ -311,7 +312,7 @@
                             cursor: pointer;
 
                             &:hover {
-                                background: $color-2;
+                                background: settings.$color-2;
                             }
 
                             img {
@@ -319,13 +320,13 @@
                             }
                         }
                         input[type="submit"] {
-                            background: $color-2;
+                            background: settings.$color-2;
                             width: inherit;
                             transition: 0.2s;
 
                             &:hover {
                                 width: inherit;
-                                background: $color-1;
+                                background: settings.$color-1;
                             }
                         }
                     }
@@ -337,7 +338,7 @@
 
             input[type="text"] {
                 width: 100%;
-                background: $color-4;
+                background: settings.$color-4;
                 border-radius: 20px 20px 6px 20px;
                 padding: 20px;
                 font-size: 1.4rem;
@@ -350,24 +351,24 @@
                 margin-top: 4px;
                 padding: 12px 16px;
                 width: 120px;
-                background: $color-2;
+                background: settings.$color-2;
                 border-radius: 20px 6px 20px 20px;
                 transition: 0.2s;
                 float: right;
 
                 &:hover {
-                    background: $color-1;
+                    background: settings.$color-1;
                     letter-spacing: 2px;
                     width: 130px;
                 }
             }
             button {
                 float: right;
-                background: $color-1;
+                background: settings.$color-1;
                 transition: 0.2s;
 
                 &:hover {
-                    background: $color-2;
+                    background: settings.$color-2;
                 }
             }
         }
@@ -396,7 +397,7 @@
                 width: 150px;
 
                 &:nth-child(1) {
-                    background: $color-1;
+                    background: settings.$color-1;
                 }
             }
         }

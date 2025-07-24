@@ -46,7 +46,8 @@ module.exports.signIn = async (req, res) => {
         });
     } catch (err) {
         const errors = signInErrors(err);
-        res.status(401).json({ message: err.message });
+        // res.status(401).json({ message: err.message });
+        res.status(401).json({ errors });
     }
 };
 module.exports.logout = (req, res) => {
