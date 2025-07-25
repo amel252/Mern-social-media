@@ -8,34 +8,6 @@ const SignInForm = () => {
     const [emailError, setEmailError] = useState("");
     const [passwordError, setPasswordError] = useState("");
 
-    // const handleLogin = async (e) => {
-    //     e.preventDefault();
-
-    //     // setEmailError("");
-    //     // setPasswordError("");
-
-    //     try {
-    //         const res = await axios.post(
-    //             `${import.meta.env.VITE_API_URI}api/user/login`,
-    //             { email, password },
-    //             { withCredentials: true }
-    //         );
-    //         console.log(res);
-
-    //         if (res.data.errors) {
-    //             setEmailError(res.data.errors.email || "");
-    //             setPasswordError(res.data.errors.password || "");
-    //         } else {
-    //             window.location = "/";
-    //         }
-    //     } catch (err) {
-    //         console.error("Erreur de connexion :", err);
-    //         if (err.response?.data?.errors) {
-    //             setEmailError(err.response.data.errors.email || "");
-    //             setPasswordError(err.response.data.errors.password || "");
-    //         }
-    //     }
-    // };
     const handleLogin = async (e) => {
         e.preventDefault();
 
