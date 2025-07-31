@@ -6,14 +6,15 @@ import axios from "axios";
 
 const App = () => {
     const [uid, setUid] = useState(null);
+
     useEffect(() => {
         const fetchUser = async () => {
             try {
                 const res = await axios.get(
-                    `${import.meta.env.VITE_API_URI}api/user/current`,
-                    { withCredentials: true }
+                    `${import.meta.env.VITE_API_URI}api/user/current-user`,
+                    { withCredentials: true } // ✅ cette ligne
                 );
-                setUid(res.data.uid); // en supposant que `uid` soit dans la réponse
+                setUid(res.data.uid);
             } catch (error) {
                 console.error(
                     "Erreur lors de la récupération de l'utilisateur :",
@@ -22,9 +23,9 @@ const App = () => {
             }
         };
 
-        fetchUser();
-        // [] c'est pour ne pas avoir une requette à l'infini
+        fetchUser(); // 🔁 Appelé une seule fois au chargement
     }, []);
+
     return (
         <UidContext.Provider value={uid}>
             <Routes />

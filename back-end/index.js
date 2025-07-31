@@ -1,16 +1,14 @@
-const express = require("express");
 const mongoose = require("mongoose");
-const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
+const express = require("express");
 const userRoutes = require("../back-end/routes/user.routes");
 const postRoutes = require("../back-end/routes/post.routes");
 
 require("dotenv").config({ path: "../back-end/config/.env" });
 
 const app = express();
-
-app.use(cookieParser());
 
 const corsOptions = {
     origin: process.env.CLIENT_URL,
@@ -20,22 +18,24 @@ const corsOptions = {
     methods: "GET,HEAD, PATCH, POST, DELETE",
     preflightContinue: false,
 };
-
-app.use(cors(corsOptions));
+// middleware:
 app.use(cookieParser());
+app.use(cors(corsOptions));
+
 app.use(
     session({
-        secret: process.env.SESSION_SECRET || "maSecretKey",
+        secret: process.env.SESSION_SECRET,
         resave: false,
         saveUninitialized: false,
         cookie: {
             secure: false,
             httpOnly: true,
-            sameSite: "lax",
+            maxAge: 24 * 60 * 60 * 1000,
+            // sameSite: "lax",
         },
     })
 );
-
+// Parse JSON
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

@@ -14,22 +14,36 @@ const createToken = (id) => {
 // function signUp (inscription)
 module.exports.signUp = async (req, res) => {
     const { pseudo, email, password } = req.body;
-    // body-parser : un middleware pour Express qui permet de lire et traiter les données envoyées dans le corps des requêtes HTTP
+
     if (!pseudo || !email || !password) {
         return res
             .status(400)
             .json({ message: "Tous les champs sont requis." });
     }
+
     try {
         const user = await UserModel.create({ pseudo, email, password });
         res.status(201).json({ user: user._id });
     } catch (err) {
-        const errors = signUpErrors(err);
-        console.error(err); // Pour voir l'erreur dans la console serveur
-        res.status(500).json({ errors });
+        // Duplication (email ou pseudo déjà utilisé)
+        if (err.code === 11000) {
+            return res.status(400).json({
+                errors: {
+                    email: err.keyPattern.email
+                        ? "Cet email est déjà enregistré."
+                        : "",
+                    pseudo: err.keyPattern.pseudo
+                        ? "Ce pseudo est déjà pris."
+                        : "",
+                },
+            });
+        }
+
+        // Autres erreurs
+        console.error("Erreur lors de l'inscription :", err);
+        return res.status(500).json({ message: "Erreur serveur" });
     }
 };
-
 module.exports.signIn = async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password)

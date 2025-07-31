@@ -13,18 +13,16 @@ router.post("/register", authController.signUp);
 router.get("/logout", authController.logout);
 
 // Vérifier si l'utilisateur est déjà connecté
+
 router.get("/current-user", (req, res) => {
-    try {
-        if (req.session && req.session.userId) {
-            return res.status(200).json({ uid: req.session.userId });
-        } else {
-            return res.status(401).json({ message: "Non authentifié" });
-        }
-    } catch (err) {
-        console.error("Erreur dans /current :", err);
-        return res.status(500).json({ message: "Erreur serveur" });
+    console.log("Session userId:", req.session?.userId);
+    if (req.session && req.session.userId) {
+        return res.status(200).json({ uid: req.session.userId });
+    } else {
+        return res.status(401).json({ message: "Non authentifié" });
     }
 });
+
 // user DB
 router.get("/", userController.getAllUsers);
 router.get("/:id", userController.getUserById);
@@ -64,35 +62,50 @@ router.post("/upload-Avatar", (req, res) => {
         uploadController.uploadAvatar(req, res);
     });
 });
+// router.post("/login", async (req, res) => {
+//     const { email, password } = req.body;
 
-// router.get("/login", (req, res) => {
-//     if (!req.session.userId) {
-//         return res.status(401).json({ error: "Utilisateur non connecté" });
+//     try {
+//         const user = await UserModel.findOne({ email });
+//         if (!user) {
+//             return res.status(401).json({ message: "Email incorrect" });
+//         }
+
+//         const isPasswordValid = await bcrypt.compare(password, user.password);
+//         if (!isPasswordValid) {
+//             return res.status(401).json({ error: "Mot de passe incorrect" });
+//         }
+
+//         // 🔐 Enregistrement de l'ID utilisateur dans la session
+//         req.session.userId = user._id;
+
+//         return res
+//             .status(200)
+//             .json({ error: "Connexion réussie", uid: user._id });
+//     } catch (err) {
+//         console.error("Erreur lors de la connexion :", err);
+//         return res.status(500).json({ error: "Erreur serveur" });
 //     }
-//     res.status(200).json({ uid: req.session.userId });
 // });
-// module.exports = router;
 router.post("/login", async (req, res) => {
     const { email, password } = req.body;
 
     try {
         const user = await UserModel.findOne({ email });
-        if (!user) {
-            return res.status(401).json({ message: "Email incorrect" });
-        }
+        if (!user)
+            return res.status(401).json({ error: "Utilisateur introuvable" });
 
-        const isPasswordValid = await bcrypt.compare(password, user.password);
-        if (!isPasswordValid) {
-            return res.status(401).json({ message: "Mot de passe incorrect" });
-        }
+        const isPasswordCorrect = await bcrypt.compare(password, user.password);
+        if (!isPasswordCorrect)
+            return res.status(401).json({ error: "Mot de passe incorrect" });
 
-        // 🔐 Enregistrement de l'ID utilisateur dans la session
-        req.session.userId = user._id;
-
-        return res.status(200).json({ message: "Connexion réussie" });
+        req.session.userId = user._id; // <-- ESSENTIEL
+        res.status(200).json({
+            message: "Connecté avec succès",
+            uid: user._id,
+        });
     } catch (err) {
-        console.error("Erreur lors de la connexion :", err);
-        return res.status(500).json({ message: "Erreur serveur" });
+        res.status(500).json({ error: "Erreur serveur" });
     }
 });
 
