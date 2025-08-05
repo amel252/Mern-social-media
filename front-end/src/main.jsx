@@ -4,6 +4,9 @@ import App from "./App.jsx";
 import "./styles/index.scss";
 
 createRoot(document.getElementById("root")).render(
+    // <Provider>
+
+    //     </Provider >
     <StrictMode>
         <App />
     </StrictMode>

@@ -9,6 +9,8 @@ const SignInForm = () => {
     const [passwordError, setPasswordError] = useState("");
 
     const handleLogin = async (e) => {
+        console.log(import.meta.env.VITE_API_URI);
+
         e.preventDefault();
 
         setEmailError("");
@@ -16,11 +18,11 @@ const SignInForm = () => {
 
         try {
             const res = await axios.post(
-                `${import.meta.env.VITE_API_URI}api/user/login`,
+                `${import.meta.env.VITE_API_URI}/api/user/login`,
                 { email, password },
                 { withCredentials: true }
             );
-            console.log(res);
+            // console.log(res);
 
             if (res.data.errors) {
                 setEmailError(res.data.errors.email || "");

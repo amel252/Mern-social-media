@@ -44,6 +44,7 @@ module.exports.signUp = async (req, res) => {
         return res.status(500).json({ message: "Erreur serveur" });
     }
 };
+//------------------signin
 module.exports.signIn = async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password)
@@ -53,7 +54,7 @@ module.exports.signIn = async (req, res) => {
         const user = await UserModel.login(email, password); // suppose que ta méthode login existe
         const token = createToken(user._id);
         // on crée un cookie qui s'appelle jtw
-        res.cookie("jwt", token, { httpOnly: true, maxAge });
+        res.cookie("jwt", token, { httpOnly: true, maxAge, path: "/" });
         res.status(200).json({
             message: "Utilisateur connecté",
             user: user._id,
@@ -64,9 +65,27 @@ module.exports.signIn = async (req, res) => {
         res.status(401).json({ errors });
     }
 };
+// ------------------supprimer
+// module.exports.logout = (req, res) => {
+//     // Tu remplaces le cookie jwt par une chaîne vide, et tu le fais expirer immédiatement (dans 1 milliseconde).
+//     res.claearCookie("jwt", "", { maxAge: 1 });
+//     res.status(200).json({ message: "Déconnexion réussie" });
+//     // res.redirect("/");
+// };
 module.exports.logout = (req, res) => {
-    // Tu remplaces le cookie jwt par une chaîne vide, et tu le fais expirer immédiatement (dans 1 milliseconde).
-    res.cookie("jwt", "", { maxAge: 1 });
-    res.status(200).json({ message: "Déconnexion réussie" });
-    res.redirect("/");
+    res.clearCookie("jwt", {
+        path: "/",
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "Lax",
+    });
+    res.status(200).json({ message: "Déconnecté" });
 };
+// module.exports.logout = (req, res) => {
+//     res.cookie("jwt", "", { maxAge: 1 });
+//     req.session.destroy((err) => {
+//         if (err)
+//             return res.status(500).json({ message: "Erreur de déconnexion" });
+//         res.status(200).json({ message: "Déconnexion réussie" });
+//     });
+// };

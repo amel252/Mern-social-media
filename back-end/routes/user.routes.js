@@ -9,7 +9,7 @@ const UserModel = require("../models/user.model");
 
 // auth routes
 router.post("/register", authController.signUp);
-// router.post("/login", authController.signIn);
+router.post("/login", authController.signIn);
 router.get("/logout", authController.logout);
 
 // Vérifier si l'utilisateur est déjà connecté
@@ -61,52 +61,6 @@ router.post("/upload-Avatar", (req, res) => {
         // ✅ Tout est bon, on passe au contrôleur
         uploadController.uploadAvatar(req, res);
     });
-});
-// router.post("/login", async (req, res) => {
-//     const { email, password } = req.body;
-
-//     try {
-//         const user = await UserModel.findOne({ email });
-//         if (!user) {
-//             return res.status(401).json({ message: "Email incorrect" });
-//         }
-
-//         const isPasswordValid = await bcrypt.compare(password, user.password);
-//         if (!isPasswordValid) {
-//             return res.status(401).json({ error: "Mot de passe incorrect" });
-//         }
-
-//         // 🔐 Enregistrement de l'ID utilisateur dans la session
-//         req.session.userId = user._id;
-
-//         return res
-//             .status(200)
-//             .json({ error: "Connexion réussie", uid: user._id });
-//     } catch (err) {
-//         console.error("Erreur lors de la connexion :", err);
-//         return res.status(500).json({ error: "Erreur serveur" });
-//     }
-// });
-router.post("/login", async (req, res) => {
-    const { email, password } = req.body;
-
-    try {
-        const user = await UserModel.findOne({ email });
-        if (!user)
-            return res.status(401).json({ error: "Utilisateur introuvable" });
-
-        const isPasswordCorrect = await bcrypt.compare(password, user.password);
-        if (!isPasswordCorrect)
-            return res.status(401).json({ error: "Mot de passe incorrect" });
-
-        req.session.userId = user._id; // <-- ESSENTIEL
-        res.status(200).json({
-            message: "Connecté avec succès",
-            uid: user._id,
-        });
-    } catch (err) {
-        res.status(500).json({ error: "Erreur serveur" });
-    }
 });
 
 module.exports = router;
