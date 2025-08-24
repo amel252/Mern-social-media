@@ -6,6 +6,7 @@ const uploadController = require("../controllers/upload.controller");
 const { uploadAvatar } = require("../middleware/multer");
 const multer = require("multer");
 const UserModel = require("../models/user.model");
+const { checkUser } = require("../middleware/auth.middleware");
 
 // auth routes
 router.post("/register", authController.signUp);
@@ -13,13 +14,14 @@ router.post("/login", authController.signIn);
 router.get("/logout", authController.logout);
 
 // Vérifier si l'utilisateur est déjà connecté
-
-router.get("/current-user", (req, res) => {
-    console.log("Session userId:", req.session?.userId);
-    if (req.session && req.session.userId) {
-        return res.status(200).json({ uid: req.session.userId });
+// Route protégée qui renvoie l'ID utilisateur extrait du token JWT
+router.get("/current-user", checkUser, (req, res) => {
+    // checkUser a ajouté req.userId si token valide
+    if (req.userId) {
+        console.log(req.userId);
+        return res.status(200).json({ uid: req.userId });
     } else {
-        return res.status(401).json({ message: "Non authentifié" });
+        return res.status(401).json({ message: "Utilisateur non authentifié" });
     }
 });
 

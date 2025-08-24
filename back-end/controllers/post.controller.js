@@ -58,9 +58,8 @@ module.exports.createPost = async (req, res) => {
     const { posterId, message, video } = req.body;
 
     if (!posterId) {
-    return res.status(400).json({ message: "posterId manquant" });
+        return res.status(400).json({ message: "posterId manquant" });
     }
-
 
     const newPost = new PostModel({
         posterId: req.body.posterId,
@@ -76,7 +75,6 @@ module.exports.createPost = async (req, res) => {
     } catch (err) {
         return res.status(400).send(err);
     }
-
 };
 // faire la function pour mettre a jour le post
 module.exports.updatePost = async (req, res) => {
@@ -224,8 +222,8 @@ module.exports.editCommentPost = async (req, res) => {
     //l’id du post (dans l’URL → req.params.id) / l’id du commentaire (dans le body → req.body.commentId)
     try {
         // Récupérer le post par ID
-        // const post = await PostModel.findById(req.params.id);
-        // if (!post) return res.status(404).send("Post non trouvé");
+        const post = await PostModel.findById(req.params.id);
+        if (!post) return res.status(404).send("Post non trouvé");
 
         // Chercher le commentaire à modifier
         const comment = post.comments.find((comment) =>

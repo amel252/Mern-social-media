@@ -47,31 +47,60 @@ module.exports.signUp = async (req, res) => {
 //------------------signin
 module.exports.signIn = async (req, res) => {
     const { email, password } = req.body;
+
     if (!email || !password)
         return res.status(400).json({ message: "Champs requis manquants." });
 
     try {
-        const user = await UserModel.login(email, password); // suppose que ta méthode login existe
+        // Vérifie dans MongoDB avec ta méthode login définie dans user.model.js
+        const user = await UserModel.login(email, password);
+
+        // Crée token
         const token = createToken(user._id);
-        // on crée un cookie qui s'appelle jtw
-        res.cookie("jwt", token, { httpOnly: true, maxAge, path: "/" });
+
+        // Envoie le cookie
+        res.cookie("jwt", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production", // true si HTTPS
+            sameSite: "lax",
+            maxAge: maxAge,
+        });
+
         res.status(200).json({
             message: "Utilisateur connecté",
             user: user._id,
         });
     } catch (err) {
         const errors = signInErrors(err);
-        // res.status(401).json({ message: err.message });
         res.status(401).json({ errors });
     }
 };
-// ------------------supprimer
-// module.exports.logout = (req, res) => {
-//     // Tu remplaces le cookie jwt par une chaîne vide, et tu le fais expirer immédiatement (dans 1 milliseconde).
-//     res.claearCookie("jwt", "", { maxAge: 1 });
-//     res.status(200).json({ message: "Déconnexion réussie" });
-//     // res.redirect("/");
+
+// module.exports.signIn = async (req, res) => {
+//     const { email, password } = req.body;
+
+//     // Trouve utilisateur
+//     const user = await UserModel.login(email, password);
+//     if (!user) {
+//         return res.status(401).json({ message: "Identifiants invalides" });
+//     }
+
+//     // Crée token JWT
+//     const token = jwt.sign({ id: user._id }, process.env.TOKEN_SECRET, {
+//         expiresIn: "1d",
+//     });
+
+//     // Envoie cookie
+//     res.cookie("jwt", token, {
+//         httpOnly: true,
+//         secure: false, // true en prod HTTPS
+//         sameSite: "lax", // ou 'none' en cross-origin + HTTPS
+//         maxAge: 24 * 60 * 60 * 1000,
+//     });
+
+//     res.status(200).json({ message: "Connexion réussie" });
 // };
+
 module.exports.logout = (req, res) => {
     res.clearCookie("jwt", {
         path: "/",
@@ -81,11 +110,3 @@ module.exports.logout = (req, res) => {
     });
     res.status(200).json({ message: "Déconnecté" });
 };
-// module.exports.logout = (req, res) => {
-//     res.cookie("jwt", "", { maxAge: 1 });
-//     req.session.destroy((err) => {
-//         if (err)
-//             return res.status(500).json({ message: "Erreur de déconnexion" });
-//         res.status(200).json({ message: "Déconnexion réussie" });
-//     });
-// };

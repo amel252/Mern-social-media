@@ -2,36 +2,19 @@ const jwt = require("jsonwebtoken");
 const UserModel = require("../models/user.model");
 
 // on va checker le token de l'utilisateur
-module.exports.checkUser = (req, res, next) => {
-    // On récupère le token JWT qui a été stocké dans les cookies au moment du login, Ce token contient l’id utilisateur
-    const token = req.cookies.jwt;
-    if (token) {
-        jwt.verify(token, process.env.TOKEN_SECRET, (err, decodedToken) => {
-            if (err) return res.status(401).json({ message: "Token invalide" });
-            req.userId = decodedToken.id;
-            next();
-        });
-    } else {
-        return res.status(401).json({ message: "Pas de token" });
-    }
-};
-// ----------------supprimer
+// module.exports.checkUser = (req, res, next) => {
+//     // On récupère le token JWT qui a été stocké dans les cookies au moment du login, Ce token contient l’id utilisateur
+//     const token = req.cookies.jwt;
 //     if (token) {
 //         jwt.verify(
-//             // Cette méthode vérifie si le token est valide
 //             token,
 //             process.env.TOKEN_SECRET,
 //             async (err, decodedToken) => {
 //                 if (err) {
-//                     // si erreur on suppr le cookie, On met res.locals.user = null pour dire qu’aucun utilisateur n'est connecté.
-//                     res.locals.user = null;
-//                     res.cookie("jwt", "", { maxAge: 1 });
 //                     next();
 //                 } else {
 //                     let user = await UserModel.findById(decodedToken.id);
-//                     // si pas d'erreur On utilise decodedToken.id pour chercher l’utilisateur dans MongoDB
 //                     res.locals.user = user;
-//                     // On stocke cet utilisateur dans res.locals.user → cela permet à toutes les vues ou middlewares suivants d’y accéder.
 //                     next();
 //                 }
 //             }
@@ -40,7 +23,42 @@ module.exports.checkUser = (req, res, next) => {
 //         res.locals.user = null;
 //         next();
 //     }
-// };
+// }
+module.exports.checkUser = (req, res, next) => {
+    const token = req.cookies.jwt;
+
+    if (token) {
+        jwt.verify(
+            token,
+            process.env.TOKEN_SECRET,
+            async (err, decodedToken) => {
+                if (err) {
+                    res.locals.user = null;
+                    next();
+                } else {
+                    try {
+                        const user = await UserModel.findById(
+                            decodedToken.id
+                        ).select("-password");
+                        res.locals.user = user;
+                        next();
+                    } catch (error) {
+                        console.error(
+                            "Erreur lors de la récupération de l'utilisateur :",
+                            error
+                        );
+                        res.locals.user = null;
+                        next();
+                    }
+                }
+            }
+        );
+    } else {
+        res.locals.user = null;
+        next();
+    }
+};
+
 // on a besoin de middleware quand on se connecte pour la 1ere fois est déja dans la BDclea
 module.exports.requireAuth = (req, res, next) => {
     const token = req.cookies.jwt;

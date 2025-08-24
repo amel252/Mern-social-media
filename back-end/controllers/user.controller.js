@@ -151,7 +151,7 @@ module.exports.unfollow = async (req, res) => {
 
         res.status(201).json(updatedUser);
     } catch (error) {
-        console.error("Erreur lors de la suppression :", err);
-        return res.status(500).json({ message: err.message });
+        console.error("Erreur lors de la suppression :", error);
+        return res.status(500).json({ message: error.message });
     }
 };

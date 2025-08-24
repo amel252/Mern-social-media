@@ -20,15 +20,18 @@ module.exports.uploadAvatar = async (req, res) => {
         const newFileName = `${req.body.userId}${extension}`;
         const newPath = path.join(req.file.destination, newFileName);
 
-
         // 3.
         const user = await UserModel.findById(req.body.userId);
-            if (user.picture) {
-            const oldPath = path.join(__dirname, "../client/public", user.picture);
+        if (user.picture) {
+            const oldPath = path.join(
+                __dirname,
+                "../client/public",
+                user.picture
+            );
             if (fs.existsSync(oldPath)) {
-            await fs.promises.unlink(oldPath);
-            console.log("Ancienne image supprimée :", oldPath);
-    }
+                await fs.promises.unlink(oldPath);
+                console.log("Ancienne image supprimée :", oldPath);
+            }
         }
         // Renommer le fichier temporaire créé par multer
         await fs.promises.rename(req.file.path, newPath);
