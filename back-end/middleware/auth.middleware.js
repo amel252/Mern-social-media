@@ -1,80 +1,60 @@
 const jwt = require("jsonwebtoken");
 const UserModel = require("../models/user.model");
 
-// on va checker le token de l'utilisateur
-// module.exports.checkUser = (req, res, next) => {
-//     // On récupère le token JWT qui a été stocké dans les cookies au moment du login, Ce token contient l’id utilisateur
-//     const token = req.cookies.jwt;
-//     if (token) {
-//         jwt.verify(
-//             token,
-//             process.env.TOKEN_SECRET,
-//             async (err, decodedToken) => {
-//                 if (err) {
-//                     next();
-//                 } else {
-//                     let user = await UserModel.findById(decodedToken.id);
-//                     res.locals.user = user;
-//                     next();
-//                 }
-//             }
-//         );
-//     } else {
-//         res.locals.user = null;
-//         next();
-//     }
-// }
+/**
+ * Middleware qui vérifie si un utilisateur est connecté
+ * et met l'utilisateur dans res.locals.user (disponible dans les vues / middlewares suivants).
+ */
 module.exports.checkUser = (req, res, next) => {
-    const token = req.cookies.jwt;
+    res.locals.user = null; // Valeur par défaut
+    req.userId = null; // ⚠️ définir par défaut
 
-    if (token) {
-        jwt.verify(
-            token,
-            process.env.TOKEN_SECRET,
-            async (err, decodedToken) => {
-                if (err) {
-                    res.locals.user = null;
-                    next();
-                } else {
-                    try {
-                        const user = await UserModel.findById(
-                            decodedToken.id
-                        ).select("-password");
-                        res.locals.user = user;
-                        next();
-                    } catch (error) {
-                        console.error(
-                            "Erreur lors de la récupération de l'utilisateur :",
-                            error
-                        );
-                        res.locals.user = null;
-                        next();
-                    }
-                }
+    const token = req.cookies.jwt;
+    if (!token) return next();
+
+    jwt.verify(token, process.env.TOKEN_SECRET, async (err, decodedToken) => {
+        if (err) return next();
+
+        try {
+            const user = await UserModel.findById(decodedToken.id).select(
+                "-password"
+            );
+            if (user) {
+                res.locals.user = user;
+                req.userId = decodedToken.id; // ✅ ajouté ici
             }
-        );
-    } else {
-        res.locals.user = null;
+        } catch (error) {
+            console.error(
+                "Erreur lors de la récupération de l'utilisateur :",
+                error
+            );
+        }
+
         next();
-    }
+    });
 };
 
-// on a besoin de middleware quand on se connecte pour la 1ere fois est déja dans la BDclea
+/**
+ * Middleware qui protège les routes privées :
+ * - Vérifie que l'utilisateur possède un token valide
+ * - Si OK, attache l'id utilisateur à req.userId
+ */
 module.exports.requireAuth = (req, res, next) => {
     const token = req.cookies.jwt;
 
-    if (token) {
-        jwt.verify(token, process.env.TOKEN_SECRET, (err, decodedToken) => {
-            if (err) {
-                console.log("Token invalide :", err.message);
-                return res.status(401).json({ error: "Token invalide" });
-            } else {
-                console.log("ID utilisateur :", decodedToken.id);
-                next();
-            }
-        });
-    } else {
+    if (!token) {
         console.log("Aucun token fourni");
         return res.status(401).json({ error: "Accès refusé : pas de token" });
     }
+
+    jwt.verify(token, process.env.TOKEN_SECRET, (err, decodedToken) => {
+        if (err) {
+            console.log("Token invalide :", err.message);
+            return res.status(401).json({ error: "Token invalide" });
+        }
+
+        req.userId = decodedToken.id; // Utile dans les contrôleurs
+        console.log("ID utilisateur :", decodedToken.id);
+        next();
+    });
 };

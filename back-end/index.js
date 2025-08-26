@@ -15,7 +15,7 @@ const corsOptions = {
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization", "sessionId"],
     exposedHeaders: ["sessionId"],
-    methods: "GET,HEAD, PATCH, POST, DELETE",
+    methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
     preflightContinue: false,
 };
 // middleware:
