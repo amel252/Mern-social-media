@@ -88,7 +88,11 @@ function UpdateProfil() {
                                             alt="user-pic"
                                         />
                                         <h4>{user.pseudo}</h4>
-                                        <h1>FOLLOW HANDLER</h1>
+                                        <div className="follow-handler">
+                                            <FollowHandler
+                                                idToFollow={user._id}
+                                            />
+                                        </div>
                                     </li>
                                 ))}
                         </ul>
@@ -118,7 +122,11 @@ function UpdateProfil() {
                                             alt="user-pic"
                                         />
                                         <h4>{user.pseudo}</h4>
-                                        <h1>FOLLOW HANDLER</h1>
+                                        <div className="follow-handler">
+                                            <FollowHandler
+                                                idToFollow={user._id}
+                                            />
+                                        </div>
                                     </li>
                                 ))}
                         </ul>

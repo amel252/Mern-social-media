@@ -2,6 +2,10 @@ import axios from "axios";
 
 export const GET_USER = "GET_USER";
 export const UPLOAD_PICTURE = "UPLOAD_PICTURE";
+export const UPDATE_BIO = "UPDATE_BIO";
+export const FOLLOW_USER = "FOLLOW_USER";
+export const UNFOLLOW_USER = "UNFOLLOW_USER";
+
 export const getUser = (uid) => async (dispatch) => {
     try {
         const res = await axios.get(
@@ -31,5 +35,41 @@ export const uploadPicture = (data, id) => async (dispatch) => {
             "Erreur uploadPicture:",
             err.response?.data || err.message
         );
+    }
+};
+
+export const updateBio = (userId, bio) => async (dispatch) => {
+    try {
+        const res = await axios.put(
+            `${import.meta.env.VITE_API_URI}/api/user/${userId}`,
+            { bio }
+        );
+        dispatch({ type: UPDATE_BIO, payload: bio });
+    } catch (err) {
+        console.error("Erreur updateBio:", err.response?.data || err.message);
+    }
+};
+export const followUser = (followId, idToFollow) => async (dispatch) => {
+    try {
+        await axios.patch(
+            `${import.meta.env.VITE_API_URI}/api/user/follow/${followId}`,
+            { idToFollow },
+            { withCredentials: true } // si besoin des cookies
+        );
+        dispatch({ type: FOLLOW_USER, payload: { idToFollow } });
+    } catch (err) {
+        console.error("Erreur followUser:", err.response?.data || err.message);
+    }
+};
+export const unfollowUser = (followId, idToUnFollow) => async (dispatch) => {
+    try {
+        await axios.patch(
+            `${import.meta.env.VITE_API_URI}/api/user/unfollow/${followId}`,
+            { idToUnFollow },
+            { withCredentials: true } // si besoin des cookies
+        );
+        dispatch({ type: UNFOLLOW_USER, payload: { idToUnFollow } });
+    } catch (err) {
+        console.error("Erreur followUser:", err.response?.data || err.message);
     }
 };
