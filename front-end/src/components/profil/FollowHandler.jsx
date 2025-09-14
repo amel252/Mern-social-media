@@ -1,43 +1,39 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { isEmpty } from "../utils";
-import { followUser, unfollowUser } from "../actions/user.actions";
+import { followUser, unfollowUser } from "../../actions/user.actions";
 
 const FollowHandler = ({ idToFollow }) => {
-    const userData = useSelector((state) => state.userReducer);
+    const currentUser = useSelector((state) => state.user); // utilisateur connecté
     const [isFollowed, setIsFollowed] = useState(false);
     const dispatch = useDispatch();
 
+    // Déterminer si l'utilisateur suit déjà idToFollow
+    useEffect(() => {
+        if (!isEmpty(currentUser?.following)) {
+            setIsFollowed(currentUser.following.includes(idToFollow));
+        }
+    }, [currentUser, idToFollow]);
+
     const handleFollow = () => {
-        dispatch(followUser(userData._id, idToFollow));
+        dispatch(followUser(currentUser._id, idToFollow));
         setIsFollowed(true);
     };
 
     const handleUnFollow = () => {
-        dispatch(unfollowUser(userData._id, idToFollow));
+        dispatch(unfollowUser(currentUser._id, idToFollow));
         setIsFollowed(false);
     };
 
-    useEffect(() => {
-        setIsFollowed(
-            !isEmpty(userData.following) &&
-                userData.following.includes(idToFollow)
-        );
-    }, [userData, idToFollow]);
+    if (!currentUser) return null; // Pas d'utilisateur connecté
 
     return (
-        <>
-            {isFollowed && !isEmpty(userData) && (
-                <span onClick={handleUnFollow}>
-                    <button className="unfollow-btn">Abonné</button>
-                </span>
-            )}
-            {!isFollowed && !isEmpty(userData) && (
-                <span onClick={handleFollow}>
-                    <button className="follow-btn">Suivre</button>
-                </span>
-            )}
-        </>
+        <button
+            onClick={isFollowed ? handleUnFollow : handleFollow}
+            className={isFollowed ? "unfollow-btn" : "follow-btn"}
+        >
+            {isFollowed ? "Abonné" : "Suivre"}
+        </button>
     );
 };
 

@@ -5,7 +5,7 @@ import Trending from "../../pages/Trending.jsx";
 import Profil from "../../pages/Profil.jsx";
 import Navbar from "../Navbar.jsx";
 
-const index = () => {
+const AppRoutes = () => {
     return (
         <>
             <Navbar />
@@ -18,4 +18,4 @@ const index = () => {
     );
 };
 
-export default index;
+export default AppRoutes;

@@ -1,39 +1,10 @@
-// const mongoose = require("mongoose");
+const mongoose = require("mongoose");
+const UserModel = require("../models/user.model.js");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-//----------------- MODELE SIMPLE -----------------
-const userSchema = new mongoose.Schema(
-    {
-        pseudo: {
-            type: String,
-            required: true,
-            minLength: 3,
-            maxLength: 55,
-            unique: true,
-            trim: true,
-        },
-        email: {
-            type: String,
-            required: true,
-            unique: true,
-            trim: true,
-            lowercase: true,
-        },
-        password: { type: String, required: true, minlength: 6 },
-        picture: { type: String, default: "./uploads/profil/random-user.png" },
-        bio: { type: String, max: 1024 },
-        followers: [String],
-        following: [String],
-        likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "Post" }],
-    },
-    { timestamps: true }
-);
-
-const UserModel = mongoose.model("User", userSchema);
-
 //----------------- TOKEN -----------------
-const maxAge = 3 * 24 * 60 * 60 * 1000;
+const maxAge = 3 * 24 * 60 * 60 * 1000; // 3jours
 const createToken = (id) => {
     return jwt.sign({ id }, process.env.TOKEN_SECRET, { expiresIn: maxAge });
 };

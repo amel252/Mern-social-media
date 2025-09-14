@@ -5,7 +5,7 @@ const postSchema = new mongoose.Schema(
     {
         posterId: {
             type: String,
-            requirede: true,
+            required: true,
         },
         message: {
             type: String,
@@ -20,21 +20,22 @@ const postSchema = new mongoose.Schema(
         },
         likers: [
             {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "User",
+                type: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+                default: [],
             },
         ],
         comments: [
             {
-                commenterId: String,
-                commenterPseudo: String,
-                text: String,
-                timestamp: Number,
+                commenterId: { type: String, required: true },
+                commenterPseudo: { type: String, required: true },
+                text: { type: String, required: true, maxlength: 300 },
+                timestamp: { type: Number, required: true },
             },
         ],
+        default: [],
     },
     {
         timestamps: true,
     }
 );
-module.exports = mongoose.model("post", postSchema);
+module.exports = mongoose.model("Post", postSchema);

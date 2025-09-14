@@ -1,15 +1,15 @@
-import { applyMiddleware, createStore } from "redux";
-// import thunk from "redux-thunk/dist/redux-thunk.js";
-import thunk from "redux-thunk";
-import rootReducer from "./index";
+import { configureStore } from "@reduxjs/toolkit";
+import userReducer from "../redux/user/userReducer";
+import usersReducer from "./users.reducer";
+import postReducer from "../redux/post.reducer";
 
-import { composeWithDevTools } from "redux-devtools-extension";
-
-// console.log("thunk.default typeof:", typeof thunk.default);
-
-const store = createStore(
-    rootReducer,
-    composeWithDevTools(applyMiddleware(thunk.default))
-);
+const store = configureStore({
+    reducer: {
+        user: userReducer,
+        users: usersReducer,
+        posts: postReducer,
+    },
+    devTools: process.env.NODE_ENV !== "production",
+});
 
 export default store;

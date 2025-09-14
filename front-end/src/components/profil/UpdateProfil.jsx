@@ -1,34 +1,36 @@
-// import React, { useState } from "react";
-import LeftNav from "../LeftNav";
+import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import LeftNav from "../LeftNav";
 import UploadImg from "./UploadImg";
+import FollowHandler from "../profil/FollowHandler";
 import { updateBio } from "../../actions/user.actions";
 import { dateParser } from "../utils";
 
 function UpdateProfil() {
-    const userData = useSelector((state) => state.userReducer);
-    const usersData = useSelector((state) => state.usersReducer);
-    const [bio, setBio] = useState(userData?.bio || "");
+    const currentUser = useSelector((state) => state.user); // utilisateur connecté
+    const usersData = useSelector((state) => state.users); // tous les utilisateurs
+    const [bio, setBio] = useState(currentUser?.bio || "");
     const [updateForm, setUpdateForm] = useState(false);
-    const dispatch = useDispatch();
     const [followingPopup, setFollowingPopup] = useState(false);
     const [followersPopup, setFollowersPopup] = useState(false);
 
-    if (!userData) return <p>Chargement...</p>;
+    const dispatch = useDispatch();
+
+    if (!currentUser) return <p>Chargement...</p>;
 
     const handleUpdate = () => {
-        dispatch(updateBio(userData._id, bio));
+        dispatch(updateBio(currentUser._id, bio));
         setUpdateForm(false);
     };
 
     return (
         <div className="profil-container">
             <LeftNav />
-            <h1>Profil de {userData.pseudo}</h1>
+            <h1>Profil de {currentUser.pseudo}</h1>
             <div className="update-container">
                 <div className="left-part">
                     <h3>Photo de profil</h3>
-                    <img src={userData.picture} alt="user-pic" />
+                    <img src={currentUser.picture} alt="user-pic" />
                     <UploadImg />
                 </div>
                 <div className="right-part">
@@ -37,7 +39,7 @@ function UpdateProfil() {
                         {!updateForm ? (
                             <>
                                 <p onClick={() => setUpdateForm(true)}>
-                                    {userData.bio}
+                                    {currentUser.bio}
                                 </p>
                                 <button onClick={() => setUpdateForm(true)}>
                                     Modifier bio
@@ -46,8 +48,7 @@ function UpdateProfil() {
                         ) : (
                             <>
                                 <textarea
-                                    type="text"
-                                    defaultValue={userData.bio}
+                                    defaultValue={currentUser.bio}
                                     onChange={(e) => setBio(e.target.value)}
                                 ></textarea>
                                 <button onClick={handleUpdate}>
@@ -56,16 +57,19 @@ function UpdateProfil() {
                             </>
                         )}
                     </div>
-                    <h4>Membre depuis le : {dateParser(userData.createdAt)}</h4>
+                    <h4>
+                        Membre depuis le : {dateParser(currentUser.createdAt)}
+                    </h4>
                     <h5 onClick={() => setFollowingPopup(true)}>
-                        Abonnements: {userData.following?.length || 0}
+                        Abonnements: {currentUser.following?.length || 0}
                     </h5>
                     <h5 onClick={() => setFollowersPopup(true)}>
-                        Abonnés: {userData.followers?.length || 0}
+                        Abonnés: {currentUser.followers?.length || 0}
                     </h5>
                 </div>
             </div>
 
+            {/* Popup abonnements */}
             {followingPopup && (
                 <div className="popup-profil-container">
                     <div className="modal">
@@ -79,7 +83,7 @@ function UpdateProfil() {
                         <ul>
                             {usersData
                                 ?.filter((user) =>
-                                    userData.following?.includes(user._id)
+                                    currentUser.following?.includes(user._id)
                                 )
                                 .map((user) => (
                                     <li key={user._id}>
@@ -88,11 +92,10 @@ function UpdateProfil() {
                                             alt="user-pic"
                                         />
                                         <h4>{user.pseudo}</h4>
-                                        <div className="follow-handler">
-                                            <FollowHandler
-                                                idToFollow={user._id}
-                                            />
-                                        </div>
+                                        <FollowHandler
+                                            currentUser={currentUser}
+                                            idToFollow={user._id}
+                                        />
                                     </li>
                                 ))}
                         </ul>
@@ -100,6 +103,7 @@ function UpdateProfil() {
                 </div>
             )}
 
+            {/* Popup abonnés */}
             {followersPopup && (
                 <div className="popup-profil-container">
                     <div className="modal">
@@ -113,7 +117,7 @@ function UpdateProfil() {
                         <ul>
                             {usersData
                                 ?.filter((user) =>
-                                    userData.followers?.includes(user._id)
+                                    currentUser.followers?.includes(user._id)
                                 )
                                 .map((user) => (
                                     <li key={user._id}>
@@ -122,11 +126,10 @@ function UpdateProfil() {
                                             alt="user-pic"
                                         />
                                         <h4>{user.pseudo}</h4>
-                                        <div className="follow-handler">
-                                            <FollowHandler
-                                                idToFollow={user._id}
-                                            />
-                                        </div>
+                                        <FollowHandler
+                                            currentUser={currentUser}
+                                            idToFollow={user._id}
+                                        />
                                     </li>
                                 ))}
                         </ul>

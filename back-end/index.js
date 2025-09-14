@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const express = require("express");
+const path = require("path");
 const userRoutes = require("../back-end/routes/user.routes");
 const postRoutes = require("../back-end/routes/post.routes");
 
@@ -21,6 +22,8 @@ const corsOptions = {
 // middleware:
 app.use(cors(corsOptions));
 app.use(cookieParser());
+// Middleware pour servir les fichiers statiques des uploads
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Parse JSON
 app.use(express.json());
