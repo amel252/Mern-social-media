@@ -6,23 +6,18 @@ import {
     UNFOLLOW_USER,
 } from "../../actions/user.actions";
 
-const initialState = {
-    _id: null,
-    pseudo: "",
-    email: "",
-    picture: "",
-    bio: "",
-    following: [],
-    followers: [],
-};
+const initialState = {};
+
 export default function userReducer(state = initialState, action) {
     switch (action.type) {
+        // GET_USER → fusionne le state existant avec les infos utilisateur (payload).
         case GET_USER:
             return {
                 ...state,
                 ...action.payload,
             };
         case UPLOAD_PICTURE:
+            // UPLOAD_PICTURE → met à jour uniquement la clé picture tout en gardant les autres infos du state.
             return {
                 ...state,
                 picture: action.payload,
@@ -35,14 +30,15 @@ export default function userReducer(state = initialState, action) {
         case FOLLOW_USER:
             return {
                 ...state,
-                following: state.following.includes(action.payload.idToFollow)
-                    ? state.following
-                    : [action.payload.idToFollow, ...state.following],
+                following: [
+                    action.payload.idToFollow,
+                    ...(state.following || []),
+                ],
             };
         case UNFOLLOW_USER:
             return {
                 ...state,
-                following: state.following.filter(
+                following: (state.following || []).filter(
                     (id) => id !== action.payload.idToUnFollow
                 ),
             };

@@ -1,30 +1,27 @@
-const mongoose = require("mongoose");
-// const session = require("express-session");
+require("dotenv").config({ path: "../back-end/config/.env" });
+//  Modules externes :
+
+const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-const express = require("express");
-const path = require("path");
+const mongoose = require("mongoose");
+
+// Modules locaux:
 const userRoutes = require("../back-end/routes/user.routes");
 const postRoutes = require("../back-end/routes/post.routes");
 
-require("dotenv").config({ path: "../back-end/config/.env" });
-
+//  Initialisation de l'app
 const app = express();
 
-const corsOptions = {
-    origin: process.env.CLIENT_URL,
-    credentials: true,
-    allowedHeaders: ["Content-Type", "Authorization", "sessionId"],
-    exposedHeaders: ["sessionId"],
-    methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
-    preflightContinue: false,
-};
 // middleware:
-app.use(cors(corsOptions));
-app.use(cookieParser());
-// Middleware pour servir les fichiers statiques des uploads
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+app.use(
+    cors({
+        origin: process.env.CLIENT_URL,
+        credentials: true,
+    })
+);
+app.use(cookieParser());
 // Parse JSON
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

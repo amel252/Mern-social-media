@@ -3,14 +3,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { isEmpty } from "../utils";
 import { followUser, unfollowUser } from "../../actions/user.actions";
 
-const FollowHandler = ({ idToFollow }) => {
-    const currentUser = useSelector((state) => state.user); // utilisateur connecté
+//
+
+const FollowHandler = ({ idToFollow, type }) => {
+    const currentUser = useSelector((state) => state.user); // utilise Redux
     const [isFollowed, setIsFollowed] = useState(false);
     const dispatch = useDispatch();
 
-    // Déterminer si l'utilisateur suit déjà idToFollow
     useEffect(() => {
-        if (!isEmpty(currentUser?.following)) {
+        if (currentUser?.following?.length > 0) {
             setIsFollowed(currentUser.following.includes(idToFollow));
         }
     }, [currentUser, idToFollow]);
@@ -25,14 +26,24 @@ const FollowHandler = ({ idToFollow }) => {
         setIsFollowed(false);
     };
 
-    if (!currentUser) return null; // Pas d'utilisateur connecté
+    if (!currentUser) return null;
+
+    const btnClass =
+        type === "suggestion" && isFollowed ? "unfollow-btn" : "follow-btn";
 
     return (
         <button
             onClick={isFollowed ? handleUnFollow : handleFollow}
-            className={isFollowed ? "unfollow-btn" : "follow-btn"}
+            className={btnClass}
         >
             {isFollowed ? "Abonné" : "Suivre"}
+            {isFollowed && (type === "card" || type === "suggestion") && (
+                <img
+                    src="./img/icons/check.svg"
+                    alt="check"
+                    style={{ marginLeft: 6 }}
+                />
+            )}
         </button>
     );
 };

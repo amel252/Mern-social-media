@@ -3,7 +3,7 @@ const path = require("path");
 
 const avatarStorage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, "uploads/profil"); // dossier où seront stockées les images
+        cb(null, "client/public/uploads/profil"); // dossier où seront stockées les images
     },
     filename: (req, file, cb) => {
         const ext = path.extname(file.originalname); // .jpg, .png, etc.
@@ -15,7 +15,7 @@ const avatarStorage = multer.diskStorage({
 // === Storage pour les posts ===
 const postStorage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, "uploads/posts"); // dossier où seront stockées les images
+        cb(null, "client/public/uploads/posts"); // dossier où seront stockées les images
     },
     filename: (req, file, cb) => {
         const ext = path.extname(file.originalname);

@@ -1,10 +1,9 @@
 const mongoose = require("mongoose");
-const UserModel = require("../models/user.model.js");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 //----------------- TOKEN -----------------
-const maxAge = 3 * 24 * 60 * 60 * 1000; // 3jours
+const maxAge = 3 * 24 * 60 * 60 * 1000;
 const createToken = (id) => {
     return jwt.sign({ id }, process.env.TOKEN_SECRET, { expiresIn: maxAge });
 };
@@ -65,7 +64,8 @@ module.exports.signIn = async (req, res) => {
         const token = createToken(user._id);
         res.cookie("jwt", token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
+            secure: false,
+            // secure: process.env.NODE_ENV === "production",
             sameSite: "lax",
             maxAge: maxAge,
         });

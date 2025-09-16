@@ -1,36 +1,25 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import {
+    GET_USERS_FAILURE,
+    GET_USERS_SUCCESS,
+    GET_USERS_START,
+} from "../actions/users.action";
 
-// 🔹 Thunk pour récupérer les utilisateurs
-export const fetchUsers = createAsyncThunk("users/fetchUsers", async () => {
-    const res = await axios.get(`${import.meta.env.VITE_API_URI}/api/users/`);
-    return res.data;
-});
+const initialState = {};
 
-// 🔹 Slice Redux Toolkit
-const usersSlice = createSlice({
-    name: "users",
-    initialState: {
-        users: [],
-        loading: false,
-        error: null,
-    },
-    reducers: {}, // Pas besoin d'actions manuelles ici
-    extraReducers: (builder) => {
-        builder
-            .addCase(fetchUsers.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-            })
-            .addCase(fetchUsers.fulfilled, (state, action) => {
-                state.loading = false;
-                state.users = action.payload;
-            })
-            .addCase(fetchUsers.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.error.message;
-            });
-    },
-});
-
-export default usersSlice.reducer;
+export default function usersReducer(state = initialState, action) {
+    switch (action.type) {
+        case GET_USERS_START:
+            return { ...state, loading: true, error: null };
+        case GET_USERS_SUCCESS:
+            return {
+                ...state,
+                loading: false,
+                users: action.payload,
+                error: null,
+            };
+        case GET_USERS_FAILURE:
+            return { ...state, loading: false, error: action.payload };
+        default:
+            return state;
+    }
+}

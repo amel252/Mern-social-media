@@ -48,7 +48,7 @@ function UpdateProfil() {
                         ) : (
                             <>
                                 <textarea
-                                    defaultValue={currentUser.bio}
+                                    value={currentUser.bio}
                                     onChange={(e) => setBio(e.target.value)}
                                 ></textarea>
                                 <button onClick={handleUpdate}>
@@ -93,8 +93,8 @@ function UpdateProfil() {
                                         />
                                         <h4>{user.pseudo}</h4>
                                         <FollowHandler
-                                            currentUser={currentUser}
                                             idToFollow={user._id}
+                                            type="suggestion"
                                         />
                                     </li>
                                 ))}
