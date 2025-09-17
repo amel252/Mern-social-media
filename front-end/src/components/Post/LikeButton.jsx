@@ -2,11 +2,26 @@ import React, { useEffect, useState, useContext } from "react";
 import { UidContext } from "../AppContext";
 import Popup from "reactjs-popup";
 import "reactjs-popup/dist/index.css";
+import { useDispatch } from "react-redux";
+import { likePost, unlikePost } from "../../actions/post.actions";
 
 const LikeButton = ({ post }) => {
     const [liked, setLiked] = useState(false);
     const uid = useContext(UidContext);
+    const dispatch = useDispatch();
 
+    // fonctions pour liker / unliker
+    const like = () => {
+        dispatch(likePost(post._id, uid));
+        setLiked(true);
+    };
+
+    const unlike = () => {
+        dispatch(unlikePost(post._id, uid));
+        setLiked(false);
+    };
+
+    // synchroniser l'état local avec les données du post
     useEffect(() => {
         if (uid && post.likers.includes(uid)) {
             setLiked(true);
@@ -16,7 +31,10 @@ const LikeButton = ({ post }) => {
     }, [uid, post.likers]);
 
     return (
-        <div className="like-container">
+        <div
+            className="like-container"
+            style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
+        >
             {/* Si pas connecté → afficher popup */}
             {!uid && (
                 <Popup
@@ -28,19 +46,26 @@ const LikeButton = ({ post }) => {
                 </Popup>
             )}
 
-            {/* Si connecté → un seul bouton qui bascule entre like/unlike */}
-            {uid && (
+            {/* Si connecté → bouton qui bascule entre like/unlike */}
+            {uid && liked && (
                 <img
-                    src={
-                        liked
-                            ? "./img/icons/heart-filled.svg"
-                            : "./img/icons/heart.svg"
-                    }
-                    alt="like"
-                    onClick={() => setLiked(!liked)}
+                    src="./img/icons/heart-filled.svg"
+                    alt="unlike"
+                    onClick={unlike}
                     style={{ cursor: "pointer" }}
                 />
             )}
+            {uid && !liked && (
+                <img
+                    src="./img/icons/heart.svg"
+                    alt="like"
+                    onClick={like}
+                    style={{ cursor: "pointer" }}
+                />
+            )}
+
+            {/* Compteur de likes */}
+            <span>{post.likers.length}</span>
         </div>
     );
 };
