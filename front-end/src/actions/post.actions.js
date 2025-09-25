@@ -4,52 +4,70 @@ import axios from "axios";
 export const GET_POSTS = "GET_POSTS";
 export const LIKE_POST = "LIKE_POST";
 export const UNLIKE_POST = "UNLIKE_POST";
+export const POST_ERROR = "POST_ERROR"; // action pour gérer les erreurs
+
 // Récupération des posts
-export const getPosts = () => {
-    return (dispatch) => {
-        return axios
-            .get(`${import.meta.env.VITE_API_URI}/api/post/`)
-            .then((res) => {
-                dispatch({ type: GET_POSTS, payload: res.data });
-            })
-            .catch((err) => {
-                console.log(err);
+export const getPosts = (num) => async (dispatch) => {
+    try {
+        const res = await axios.get(
+            `${import.meta.env.VITE_API_URI}/api/post/`
+        );
+
+        if (res.status === 200 && Array.isArray(res.data)) {
+            const array = res.data.slice(0, num);
+            dispatch({ type: GET_POSTS, payload: array });
+        } else {
+            dispatch({
+                type: POST_ERROR,
+                payload: "Erreur lors de la récupération des posts.",
             });
-    };
+        }
+    } catch (err) {
+        console.error("Erreur getPosts:", err);
+        dispatch({ type: POST_ERROR, payload: err.message });
+    }
 };
+
 // Like d’un post
-export const likePost = (postId, userId) => {
-    return (dispatch) => {
-        return axios({
-            method: "patch",
-            url: `${import.meta.env.VITE_API_URI}/api/post/like-post/${postId}`,
-            data: { id: userId },
-        })
-            .then((res) => {
-                dispatch({ type: LIKE_POST, payload: { postId, userId } });
-            })
-            .catch((err) => {
-                console.log(err);
+export const likePost = (postId, userId) => async (dispatch) => {
+    try {
+        const res = await axios.patch(
+            `${import.meta.env.VITE_API_URI}/api/post/like-post/${postId}`,
+            { id: userId }
+        );
+
+        if (res.status === 200) {
+            dispatch({ type: LIKE_POST, payload: { postId, userId } });
+        } else {
+            dispatch({
+                type: POST_ERROR,
+                payload: "Impossible de liker le post.",
             });
-    };
+        }
+    } catch (err) {
+        console.error("Erreur likePost:", err);
+        dispatch({ type: POST_ERROR, payload: err.message });
+    }
 };
+
 // Unlike d’un post
-export const unlikePost = (postId, userId) => {
-    return (dispatch) => {
-        return axios
-            .patch(
-                `${
-                    import.meta.env.VITE_API_URI
-                }/api/post/unlike-post/${postId}`,
-                {
-                    id: userId,
-                }
-            )
-            .then(() => {
-                dispatch({ type: UNLIKE_POST, payload: { postId, userId } });
-            })
-            .catch((err) => {
-                console.error("Erreur lors du unlike :", err);
+export const unlikePost = (postId, userId) => async (dispatch) => {
+    try {
+        const res = await axios.patch(
+            `${import.meta.env.VITE_API_URI}/api/post/unlike-post/${postId}`,
+            { id: userId }
+        );
+
+        if (res.status === 200) {
+            dispatch({ type: UNLIKE_POST, payload: { postId, userId } });
+        } else {
+            dispatch({
+                type: POST_ERROR,
+                payload: "Impossible de retirer le like.",
             });
-    };
+        }
+    } catch (err) {
+        console.error("Erreur unlikePost:", err);
+        dispatch({ type: POST_ERROR, payload: err.message });
+    }
 };
