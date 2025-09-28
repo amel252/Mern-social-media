@@ -53,7 +53,7 @@ const SignUpForm = () => {
 
         try {
             const res = await axios.post(
-                `${import.meta.env.VITE_API_URI}/api/user/register`,
+                `${import.meta.env.VITE_API_URL}/api/user/register`,
                 { pseudo, email, password },
                 { withCredentials: true }
             );
