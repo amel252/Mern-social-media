@@ -5,6 +5,7 @@ export const GET_POSTS = "GET_POSTS";
 export const LIKE_POST = "LIKE_POST";
 export const UNLIKE_POST = "UNLIKE_POST";
 export const POST_ERROR = "POST_ERROR"; // action pour gérer les erreurs
+export const UPDATE_POST = "UPDATE_POST";
 
 // Récupération des posts
 export const getPosts = (num) => async (dispatch) => {
@@ -70,4 +71,20 @@ export const unlikePost = (postId, userId) => async (dispatch) => {
         console.error("Erreur unlikePost:", err);
         dispatch({ type: POST_ERROR, payload: err.message });
     }
+};
+export const updatePost = (postId, message) => {
+    return async (dispatch) => {
+        try {
+            await axios.put(`${process.env.CLIENT_URL}/api/post/${postId}`, {
+                message,
+            });
+
+            dispatch({
+                type: UPDATE_POST,
+                payload: { message, postId },
+            });
+        } catch (error) {
+            console.error("Erreur lors de la mise à jour du post :", error);
+        }
+    };
 };

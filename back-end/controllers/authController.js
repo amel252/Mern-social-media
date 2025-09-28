@@ -1,9 +1,10 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const UserModel = require("../models/user.model");
 
 //----------------- TOKEN -----------------
-const maxAge = 3 * 24 * 60 * 60 * 1000;
+const maxAge = 3 * 24 * 60 * 60; // 3 jours en secondes
 const createToken = (id) => {
     return jwt.sign({ id }, process.env.TOKEN_SECRET, { expiresIn: maxAge });
 };
@@ -49,17 +50,29 @@ module.exports.signUp = async (req, res) => {
 module.exports.signIn = async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password)
-        return res.status(400).json({ message: "Champs requis manquants." });
+        return res.status(400).json({
+            errors: {
+                email: !email ? "Email requis" : "",
+                password: !password ? "Mot de passe requis" : "",
+            },
+        });
 
     try {
         // cherche dans la base de données un utilisateur dont le champ email correspond à celui fourni.// Si un utilisateur est trouvé, il est stocké dans la variable user.
 
         const user = await UserModel.findOne({ email });
-        if (!user) throw Error("email incorrect");
-
+        if (!user) {
+            return res.status(401).json({
+                errors: { email: "Email incorrect" },
+            });
+        }
         // Si l’utilisateur existe (non nul), on continue pour vérifier le mot de passe,compare va comparer le mail dans BD haché stocké  et le password fourni
         const auth = await bcrypt.compare(password, user.password);
-        if (!auth) throw Error("password incorrecte");
+        if (!auth) {
+            return res.status(401).json({
+                errors: { password: "Mot de passe incorrect" },
+            });
+        }
 
         const token = createToken(user._id);
         res.cookie("jwt", token, {
@@ -67,7 +80,7 @@ module.exports.signIn = async (req, res) => {
             secure: false,
             // secure: process.env.NODE_ENV === "production",
             sameSite: "lax",
-            maxAge: maxAge,
+            maxAge: maxAge * 1000,
         });
         // si tout est ok
         res.status(200).json({
@@ -75,10 +88,10 @@ module.exports.signIn = async (req, res) => {
             user: user._id,
         });
     } catch (err) {
-        res.status(401).json({ errors: err.message });
+        console.error("Erreur serveur :", err);
+        res.status(500).json({ message: "Erreur serveur" });
     }
 };
-
 //----------------- LOGOUT -----------------
 module.exports.logout = (req, res) => {
     res.clearCookie("jwt", {

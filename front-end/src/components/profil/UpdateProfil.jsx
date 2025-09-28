@@ -48,7 +48,7 @@ function UpdateProfil() {
                         ) : (
                             <>
                                 <textarea
-                                    value={currentUser.bio}
+                                    value={bio}
                                     onChange={(e) => setBio(e.target.value)}
                                 ></textarea>
                                 <button onClick={handleUpdate}>
@@ -88,7 +88,10 @@ function UpdateProfil() {
                                 .map((user) => (
                                     <li key={user._id}>
                                         <img
-                                            src={user.picture}
+                                            src={
+                                                currentUser.picture ||
+                                                "/default.png"
+                                            }
                                             alt="user-pic"
                                         />
                                         <h4>{user.pseudo}</h4>

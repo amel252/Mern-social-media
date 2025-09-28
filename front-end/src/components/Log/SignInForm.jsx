@@ -9,7 +9,7 @@ const SignInForm = () => {
     const [passwordError, setPasswordError] = useState("");
 
     const handleLogin = async (e) => {
-        console.log(import.meta.env.VITE_API_URI);
+        // console.log(import.meta.env.VITE_API_URI);
 
         e.preventDefault();
 
