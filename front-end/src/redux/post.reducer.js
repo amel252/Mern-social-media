@@ -5,6 +5,7 @@ import {
     POST_ERROR,
     UPDATE_POST,
     DELETE_POST,
+    ADD_COMMENT,
 } from "../actions/post.actions";
 
 const initialState = {
@@ -72,6 +73,23 @@ export default function postsReducer(state = initialState, action) {
             });
         case DELETE_POST:
             return state.filter((post) => post._id !== action.payload.postId);
+
+        // CRUD commentaire
+        case ADD_COMMENT:
+            return {
+                ...state,
+                posts: state.posts.map((post) =>
+                    post._id === action.payload.postId
+                        ? {
+                              ...post,
+                              comments: [
+                                  ...post.comments,
+                                  action.payload.comment,
+                              ],
+                          }
+                        : post
+                ),
+            };
         default:
             return state;
     }

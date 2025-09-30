@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { addComment, getPosts } from "../../actions/post.actions";
 import { isEmpty, timestampParser } from "../utils";
 import FollowHandler from "../profil/FollowHandler";
+import EditDeleteComment from "./EditDeleteComment";
 
 const CardComments = ({ post }) => {
     const [text, setText] = useState("");
@@ -10,11 +12,11 @@ const CardComments = ({ post }) => {
     const dispatch = useDispatch();
 
     const handleComment = () => {
+        e.preventDefault();
         if (text.trim()) {
-            // Dispatch de l'action Redux addComment
-            // dispatch(addComment(post._id, userData._id, text))
-            console.log("Commentaire à envoyer :", text);
-            setText("");
+            dispatch(
+                addComment(post._id, userData._id, text, userData.pseudo)
+            ).then(() => setText("")); // reset champ seulement après succès
         }
     };
 
@@ -64,6 +66,10 @@ const CardComments = ({ post }) => {
                                     </span>
                                 </div>
                                 <p>{comment.text}</p>
+                                <EditDeleteComment
+                                    comment={comment}
+                                    postId={post._id}
+                                />
                             </div>
                         </div>
                     );

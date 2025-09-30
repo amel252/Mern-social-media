@@ -117,31 +117,26 @@ export const deletePost = (postId) => {
 };
 
 // create comment
+
 export const addComment = (postId, commenterId, text, commenterPseudo) => {
     return async (dispatch) => {
         try {
-            await axios.patch(
+            const res = await axios.patch(
                 `${
                     import.meta.env.VITE_API_URL
                 }/api/post/comment-post/${postId}`,
-                {
-                    commenterId,
-                    text,
-                    commenterPseudo,
-                }
+                { commenterId, text, commenterPseudo }
             );
 
-            // res.data peut contenir le commentaire créé ou le post mis à jour
             dispatch({
                 type: ADD_COMMENT,
                 payload: { postId, comment: res.data },
             });
+
+            return res.data; // ✅ permet le .then() côté composant
         } catch (error) {
             console.error("Erreur lors de l'ajout du commentaire :", error);
-            dispatch({
-                type: POST_ERROR,
-                payload: error.message,
-            });
+            dispatch({ type: POST_ERROR, payload: error.message });
         }
     };
 };
