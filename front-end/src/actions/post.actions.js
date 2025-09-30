@@ -8,6 +8,9 @@ export const POST_ERROR = "POST_ERROR"; // action pour gérer les erreurs
 export const UPDATE_POST = "UPDATE_POST";
 export const DELETE_POST = "DELETE_POST";
 
+//comments
+export const ADD_COMMENT = "ADD_COMMENT";
+
 // Récupération des posts
 export const getPosts = (num) => async (dispatch) => {
     try {
@@ -109,6 +112,36 @@ export const deletePost = (postId) => {
         } catch (error) {
             console.error("Erreur lors de la suppression du post :", error);
             dispatch({ type: POST_ERROR, payload: error.message });
+        }
+    };
+};
+
+// create comment
+export const addComment = (postId, commenterId, text, commenterPseudo) => {
+    return async (dispatch) => {
+        try {
+            await axios.patch(
+                `${
+                    import.meta.env.VITE_API_URL
+                }/api/post/comment-post/${postId}`,
+                {
+                    commenterId,
+                    text,
+                    commenterPseudo,
+                }
+            );
+
+            // res.data peut contenir le commentaire créé ou le post mis à jour
+            dispatch({
+                type: ADD_COMMENT,
+                payload: { postId, comment: res.data },
+            });
+        } catch (error) {
+            console.error("Erreur lors de l'ajout du commentaire :", error);
+            dispatch({
+                type: POST_ERROR,
+                payload: error.message,
+            });
         }
     };
 };

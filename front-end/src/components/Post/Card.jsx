@@ -1,20 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-// import { isEmpty } from "../utils";
 import { dateParser } from "../utils";
 import FollowHandler from "../profil/FollowHandler";
 import LikeButton from "./LikeButton";
 import { updatePost } from "../../actions/post.actions";
 import DeleteCard from "./DeleteCard";
+import CardComments from "./CardComments";
 
 export default function Card({ post }) {
     const [isLoading, setIsLoading] = useState(true);
     const [isUpdated, setIsUpdated] = useState(false);
     const [textUpdate, setTextUpdate] = useState(null);
-
+    const [showComments, setShowComments] = useState(false);
     const usersData = useSelector((state) => state.usersReducer); // liste des users
     const userData = useSelector((state) => state.userReducer); // user connecté ?
     const dispatch = useDispatch();
+
     const updateItem = () => {
         if (textUpdate && textUpdate !== post.message) {
             dispatch(updatePost(post._id, textUpdate));
@@ -125,6 +126,9 @@ export default function Card({ post }) {
                             <div className="card-footer">
                                 <div className="comment-icon">
                                     <img
+                                        onClick={() =>
+                                            setShowComments(!showComments)
+                                        }
                                         src="./img/icons/message1.svg"
                                         alt="comment"
                                     />
@@ -133,6 +137,7 @@ export default function Card({ post }) {
                                 <LikeButton post={post} />
                                 <img src="./img/icons/share.svg" alt="share" />
                             </div>
+                            {showComment && <CardComments post={post} />}
                         </div>
                     </>
                 )}

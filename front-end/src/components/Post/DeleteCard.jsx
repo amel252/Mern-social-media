@@ -1,6 +1,6 @@
 import React from "react";
 import { useDispatch } from "react-redux";
-import { deletePost } from "../actions/post.actions";
+import { deletePost } from "../../actions/post.actions";
 
 const DeleteCard = ({ id }) => {
     const dispatch = useDispatch();

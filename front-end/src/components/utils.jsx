@@ -1,5 +1,8 @@
-export const dateParser = (num) => {
-    let options = {
+// Convertit une date ou un timestamp en format lisible FR
+export const dateParser = (input) => {
+    if (!input) return null;
+
+    const options = {
         hour: "2-digit",
         minute: "2-digit",
         second: "2-digit",
@@ -9,10 +12,30 @@ export const dateParser = (num) => {
         day: "numeric",
     };
 
-    // Si num est déjà un timestamp -> pas besoin de Date.parse
-    let date = new Date(num).toLocaleString("fr-FR", options);
-    return date.toString();
+    // input peut être une string ou un timestamp
+    const date = new Date(input).toLocaleString("fr-FR", options);
+    return date; // déjà une string
 };
+
+// Même fonction mais pour les timestamps explicites
+export const timestampParser = (timestamp) => {
+    if (!timestamp) return null;
+
+    const options = {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        weekday: "long",
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+    };
+
+    const date = new Date(timestamp).toLocaleString("fr-FR", options);
+    return date;
+};
+
+// Vérifie si une valeur est vide
 export const isEmpty = (value) => {
     return (
         value === undefined ||
