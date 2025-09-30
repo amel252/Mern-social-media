@@ -7,6 +7,7 @@ import {
     DELETE_POST,
     ADD_COMMENT,
     EDIT_COMMENT,
+    DELETE_COMMENT,
 } from "../actions/post.actions";
 
 const initialState = {
@@ -64,16 +65,24 @@ export default function postsReducer(state = initialState, action) {
                 error: action.payload,
             };
         case UPDATE_POST:
-            return state.map((post) => {
-                if (post._id === action.payload.postId) {
-                    return {
-                        ...post,
-                        message: action.payload.message,
-                    };
-                } else return post;
-            });
+            return {
+                ...state,
+                posts: posts.map((post) => {
+                    if (post._id === action.payload.postId) {
+                        return {
+                            ...post,
+                            message: action.payload.message,
+                        };
+                    } else return post;
+                }),
+            };
         case DELETE_POST:
-            return state.filter((post) => post._id !== action.payload.postId);
+            return {
+                ...state,
+                posts: state.posts.filter(
+                    (post) => post._id !== action.payload.postId
+                ),
+            };
 
         // CRUD commentaire
         case ADD_COMMENT:
@@ -92,23 +101,39 @@ export default function postsReducer(state = initialState, action) {
                 ),
             };
         case EDIT_COMMENT:
-            return state.map((post) => {
-                if (post._id === action.payload.postId) {
-                    return {
-                        ...post,
-                        comments: post.comments.map((comment) => {
-                            if (comment._id === action.payload.commentId) {
-                                return {
-                                    ...comment,
-                                    text: action.payload.text,
-                                };
-                            }
-                            return comment; // <-- important, garder les autres commentaires
-                        }),
-                    };
-                }
-                return post; // <-- important, garder les autres posts
-            });
+            return {
+                ...state,
+                posts: state.posts.map((post) =>
+                    post._id === action.payload.postId
+                        ? {
+                              ...post,
+                              comments: post.comments.map((comment) =>
+                                  comment._id === action.payload.commentId
+                                      ? {
+                                            ...comment,
+                                            text: action.payload.text,
+                                        }
+                                      : comment
+                              ),
+                          }
+                        : post
+                ),
+            };
+        case DELETE_COMMENT:
+            return {
+                ...state,
+                posts: state.posts.map((post) =>
+                    post._id === action.payload.postId
+                        ? {
+                              ...post,
+                              comments: post.comments.filter(
+                                  (comment) =>
+                                      comment._id !== action.payload.commentId
+                              ),
+                          }
+                        : post
+                ),
+            };
 
         default:
             return state;

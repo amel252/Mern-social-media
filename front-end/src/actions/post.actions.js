@@ -11,6 +11,7 @@ export const DELETE_POST = "DELETE_POST";
 //comments
 export const ADD_COMMENT = "ADD_COMMENT";
 export const EDIT_COMMENT = "EDIT_COMMENT";
+export const DELETE_COMMENT = "DELETE_COMMENT";
 
 // Récupération des posts
 export const getPosts = (num) => async (dispatch) => {
@@ -141,25 +142,42 @@ export const addComment = (postId, commenterId, text, commenterPseudo) => {
         }
     };
 };
+// Modifier un commentaire
+export const editComment = (postId, commentId, text) => async (dispatch) => {
+    try {
+        await axios.patch(
+            `${
+                import.meta.env.VITE_API_URL
+            }/api/post/edit-comment-post/${postId}`,
+            { commentId, text }
+        );
 
-// Edit Comment
-export const editComment = (postId, commentId, text) => {
-    return async (dispatch) => {
-        try {
-            const res = await axios.patch(
-                `${
-                    import.meta.env.VITE_API_URL
-                }/api/post/edit-comment-post/${postId}`,
-                { commentId, text }
-            );
+        dispatch({
+            type: EDIT_COMMENT,
+            payload: { postId, commentId, text },
+        });
+    } catch (error) {
+        console.error("Erreur lors de la modification du commentaire :", error);
+        dispatch({ type: POST_ERROR, payload: error.message });
+    }
+};
 
-            dispatch({
-                type: EDIT_COMMENT,
-                payload: { postId, commentId, text },
-            });
-        } catch (error) {
-            console.error("Erreur lors de l'ajout du commentaire :", error);
-            dispatch({ type: POST_ERROR, payload: error.message });
-        }
-    };
+// Supprimer un commentaire
+export const deleteComment = (postId, commentId) => async (dispatch) => {
+    try {
+        await axios.patch(
+            `${
+                import.meta.env.VITE_API_URL
+            }/api/post/delete-comment-post/${postId}`,
+            { commentId }
+        );
+
+        dispatch({
+            type: DELETE_COMMENT,
+            payload: { postId, commentId },
+        });
+    } catch (error) {
+        console.error("Erreur lors de la suppression du commentaire :", error);
+        dispatch({ type: POST_ERROR, payload: error.message });
+    }
 };
