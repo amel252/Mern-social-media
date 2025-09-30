@@ -6,6 +6,7 @@ import {
     UPDATE_POST,
     DELETE_POST,
     ADD_COMMENT,
+    EDIT_COMMENT,
 } from "../actions/post.actions";
 
 const initialState = {
@@ -90,6 +91,25 @@ export default function postsReducer(state = initialState, action) {
                         : post
                 ),
             };
+        case EDIT_COMMENT:
+            return state.map((post) => {
+                if (post._id === action.payload.postId) {
+                    return {
+                        ...post,
+                        comments: post.comments.map((comment) => {
+                            if (comment._id === action.payload.commentId) {
+                                return {
+                                    ...comment,
+                                    text: action.payload.text,
+                                };
+                            }
+                            return comment; // <-- important, garder les autres commentaires
+                        }),
+                    };
+                }
+                return post; // <-- important, garder les autres posts
+            });
+
         default:
             return state;
     }

@@ -10,6 +10,7 @@ export const DELETE_POST = "DELETE_POST";
 
 //comments
 export const ADD_COMMENT = "ADD_COMMENT";
+export const EDIT_COMMENT = "EDIT_COMMENT";
 
 // Récupération des posts
 export const getPosts = (num) => async (dispatch) => {
@@ -134,6 +135,28 @@ export const addComment = (postId, commenterId, text, commenterPseudo) => {
             });
 
             return res.data; // ✅ permet le .then() côté composant
+        } catch (error) {
+            console.error("Erreur lors de l'ajout du commentaire :", error);
+            dispatch({ type: POST_ERROR, payload: error.message });
+        }
+    };
+};
+
+// Edit Comment
+export const editComment = (postId, commentId, text) => {
+    return async (dispatch) => {
+        try {
+            const res = await axios.patch(
+                `${
+                    import.meta.env.VITE_API_URL
+                }/api/post/edit-comment-post/${postId}`,
+                { commentId, text }
+            );
+
+            dispatch({
+                type: EDIT_COMMENT,
+                payload: { postId, commentId, text },
+            });
         } catch (error) {
             console.error("Erreur lors de l'ajout du commentaire :", error);
             dispatch({ type: POST_ERROR, payload: error.message });
