@@ -5,6 +5,7 @@ import { dateParser } from "../utils";
 import FollowHandler from "../profil/FollowHandler";
 import LikeButton from "./LikeButton";
 import { updatePost } from "../../actions/post.actions";
+import DeleteCard from "./DeleteCard";
 
 export default function Card({ post }) {
     const [isLoading, setIsLoading] = useState(true);
@@ -118,6 +119,7 @@ export default function Card({ post }) {
                                             alt="edit"
                                         />
                                     </div>
+                                    <DeleteCard id={post._id} />
                                 </div>
                             )}
                             <div className="card-footer">

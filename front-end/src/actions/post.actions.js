@@ -6,12 +6,13 @@ export const LIKE_POST = "LIKE_POST";
 export const UNLIKE_POST = "UNLIKE_POST";
 export const POST_ERROR = "POST_ERROR"; // action pour gérer les erreurs
 export const UPDATE_POST = "UPDATE_POST";
+export const DELETE_POST = "DELETE_POST";
 
 // Récupération des posts
 export const getPosts = (num) => async (dispatch) => {
     try {
         const res = await axios.get(
-            `${import.meta.env.VITE_API_URI}/api/post/`
+            `${import.meta.env.VITE_API_URL}/api/post/`
         );
 
         if (res.status === 200 && Array.isArray(res.data)) {
@@ -33,7 +34,7 @@ export const getPosts = (num) => async (dispatch) => {
 export const likePost = (postId, userId) => async (dispatch) => {
     try {
         const res = await axios.patch(
-            `${import.meta.env.VITE_API_URI}/api/post/like-post/${postId}`,
+            `${import.meta.env.VITE_API_URL}/api/post/like-post/${postId}`,
             { id: userId }
         );
 
@@ -55,7 +56,7 @@ export const likePost = (postId, userId) => async (dispatch) => {
 export const unlikePost = (postId, userId) => async (dispatch) => {
     try {
         const res = await axios.patch(
-            `${import.meta.env.VITE_API_URI}/api/post/unlike-post/${postId}`,
+            `${import.meta.env.VITE_API_URL}/api/post/unlike-post/${postId}`,
             { id: userId }
         );
 
@@ -72,12 +73,16 @@ export const unlikePost = (postId, userId) => async (dispatch) => {
         dispatch({ type: POST_ERROR, payload: err.message });
     }
 };
+// mettre à jour post
 export const updatePost = (postId, message) => {
     return async (dispatch) => {
         try {
-            await axios.put(`${process.env.CLIENT_URL}/api/post/${postId}`, {
-                message,
-            });
+            await axios.put(
+                `${import.meta.env.VITE_API_URL}/api/post/${postId}`,
+                {
+                    message,
+                }
+            );
 
             dispatch({
                 type: UPDATE_POST,
@@ -85,6 +90,25 @@ export const updatePost = (postId, message) => {
             });
         } catch (error) {
             console.error("Erreur lors de la mise à jour du post :", error);
+            dispatch({ type: POST_ERROR, payload: error.message });
+        }
+    };
+};
+//  supprimé un post
+export const deletePost = (postId) => {
+    return async (dispatch) => {
+        try {
+            await axios.delete(
+                `${import.meta.env.VITE_API_URL}/api/post/${postId}`
+            );
+
+            dispatch({
+                type: DELETE_POST,
+                payload: { postId },
+            });
+        } catch (error) {
+            console.error("Erreur lors de la suppression du post :", error);
+            dispatch({ type: POST_ERROR, payload: error.message });
         }
     };
 };

@@ -46,7 +46,7 @@ module.exports.signUp = async (req, res) => {
     }
 };
 
-//----------------- LOGIN -----------------
+//----------------- LOGIN  connexion-----------------
 module.exports.signIn = async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password)
@@ -92,7 +92,7 @@ module.exports.signIn = async (req, res) => {
         res.status(500).json({ message: "Erreur serveur" });
     }
 };
-//----------------- LOGOUT -----------------
+//----------------- LOGOUT Déconnexion-----------------
 module.exports.logout = (req, res) => {
     res.clearCookie("jwt", {
         path: "/",

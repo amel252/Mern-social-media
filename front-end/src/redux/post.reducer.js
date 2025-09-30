@@ -4,9 +4,13 @@ import {
     UNLIKE_POST,
     POST_ERROR,
     UPDATE_POST,
+    DELETE_POST,
 } from "../actions/post.actions";
 
-const initialState = [];
+const initialState = {
+    posts: [],
+    error: null,
+};
 
 export default function postsReducer(state = initialState, action) {
     switch (action.type) {
@@ -66,6 +70,8 @@ export default function postsReducer(state = initialState, action) {
                     };
                 } else return post;
             });
+        case DELETE_POST:
+            return state.filter((post) => post._id !== action.payload.postId);
         default:
             return state;
     }
