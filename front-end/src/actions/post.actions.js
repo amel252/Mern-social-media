@@ -5,7 +5,7 @@ export const GET_POSTS = "GET_POSTS";
 export const ADD_POST = "ADD_POST";
 export const LIKE_POST = "LIKE_POST";
 export const UNLIKE_POST = "UNLIKE_POST";
-export const POST_ERROR = "POST_ERROR"; // action pour gérer les erreurs
+
 export const UPDATE_POST = "UPDATE_POST";
 export const DELETE_POST = "DELETE_POST";
 
@@ -13,6 +13,9 @@ export const DELETE_POST = "DELETE_POST";
 export const ADD_COMMENT = "ADD_COMMENT";
 export const EDIT_COMMENT = "EDIT_COMMENT";
 export const DELETE_COMMENT = "DELETE_COMMENT";
+
+// errors
+export const POST_ERROR = "POST_ERROR"; // action pour gérer les erreurs
 
 // Récupération des posts
 export const getPosts = (num) => async (dispatch) => {
@@ -75,8 +78,15 @@ export const likePost = (postId, userId) => async (dispatch) => {
             });
         }
     } catch (err) {
-        console.error("Erreur likePost:", err);
+        console.error("Erreur addPost:", err.response?.data || err.message);
+
+        // Envoie l’erreur dans Redux
         dispatch({ type: POST_ERROR, payload: err.message });
+
+        // Vide l’erreur après 3 secondes
+        setTimeout(() => {
+            dispatch({ type: POST_ERROR, payload: "" });
+        }, 3000);
     }
 };
 

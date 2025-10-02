@@ -6,6 +6,9 @@ export const UPDATE_BIO = "UPDATE_BIO";
 export const FOLLOW_USER = "FOLLOW_USER";
 export const UNFOLLOW_USER = "UNFOLLOW_USER";
 
+// errors
+export const USER_ERRORS = "USER_ERRORS";
+
 export const getUser = (uid) => async (dispatch) => {
     try {
         const res = await axios.get(
@@ -26,9 +29,15 @@ export const uploadPicture = (data, id) => async (dispatch) => {
             `${import.meta.env.VITE_API_URL}/api/user/upload`,
             data
         );
+
         const res = await axios.get(
             `${import.meta.env.VITE_API_URL}/api/user/${id}`
         );
+        if (res.data.errors) {
+            dispatch({ type: USER_ERRORS, payload: "" });
+        } else {
+            dispatch({ type: USER_ERRORS, payload: res.data.errors });
+        }
         dispatch({ type: UPLOAD_PICTURE, payload: res.data.picture });
     } catch (err) {
         console.error(

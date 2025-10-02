@@ -10,7 +10,8 @@ const NewPostForm = () => {
     const [postPicture, setPostPicture] = useState(null);
     const [video, setVideo] = useState("");
     const [file, setFile] = useState();
-    const userData = useSelector((state) => state.useReduder);
+    const userData = useSelector((state) => state.userReducer);
+    const error = useSelector((state) => state.errorReducer);
     const dispatch = useDispatch();
 
     const handlePicture = (e) => {
@@ -42,27 +43,28 @@ const NewPostForm = () => {
         setVideo("");
         setFile("");
     };
-    // il va cherché dans les elements écris si y'a un lien , puis le traiter
-    const handleVideo = () => {
-        let findLink = message.split(" ");
-        for (let i = 0; i < findLink.length; i++) {
-            if (
-                findLink[i].includes("https://www.yout") ||
-                findLink[i].includes("https://yout")
-            ) {
-                // on va remplacé dans notre lien avec embed
-                let embed = findLink[i].replace("watch?v=", "embed/");
-                // remmetre la video depuis le début à partir de &
-                setVideo(embed.split("&")[0]);
-                // pour enlever le lien
-                findLink.splice(i, 1);
-                setMessage(findLink.join(" "));
-                setPostPicture("");
-            }
-        }
-    };
+
     useEffect(() => {
-        if (isEmpty(userData)) setIsLoading(false);
+        if (!isEmpty(userData)) setIsLoading(false);
+        // il va cherché dans les elements écris si y'a un lien , puis le traiter
+        const handleVideo = () => {
+            let findLink = message.split(" ");
+            for (let i = 0; i < findLink.length; i++) {
+                if (
+                    findLink[i].includes("https://www.yout") ||
+                    findLink[i].includes("https://yout")
+                ) {
+                    // on va remplacé dans notre lien avec embed
+                    let embed = findLink[i].replace("watch?v=", "embed/");
+                    // remmetre la video depuis le début à partir de &
+                    setVideo(embed.split("&")[0]);
+                    // pour enlever le lien
+                    findLink.splice(i, 1);
+                    setMessage(findLink.join(" "));
+                    setPostPicture("");
+                }
+            }
+        };
         handleVideo();
     }, [userData, message, video]);
     return (
@@ -75,12 +77,12 @@ const NewPostForm = () => {
                         <p>
                             <span>
                                 {userData.following
-                                    ? userData.following.lenght
+                                    ? userData.following.length
                                     : 0}
                             </span>
                             {""}
                             Abonnements
-                            {userData.following && userData.following.lenght > 1
+                            {userData.following && userData.following.length > 1
                                 ? "s"
                                 : null}
                         </p>
@@ -145,7 +147,7 @@ const NewPostForm = () => {
                                 {isEmpty(video) && (
                                     <>
                                         <img
-                                            src="./img/icons/picture"
+                                            src="./img/icons/picture.svg"
                                             alt="img"
                                         />
                                         <input
@@ -163,6 +165,8 @@ const NewPostForm = () => {
                                     </button>
                                 )}
                             </div>
+                            {!isEmpty(error.format) && <p>{error.format}</p>}
+                            {!isEmpty(error.maxSize) && <p>{error.maxSize}</p>}
                             <div className="btn-send">
                                 {message || postPicture || video.length > 20 ? (
                                     <button
