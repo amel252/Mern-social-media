@@ -8,7 +8,7 @@ export const getUsers = () => async (dispatch) => {
     dispatch({ type: "GET_USERS_START" });
     try {
         const { data } = await axios.get(
-            `${import.meta.env.VITE_API_URI}/api/user`
+            `${import.meta.env.VITE_API_URL}/api/user`
         );
         dispatch({ type: "GET_USERS_SUCCESS", payload: data });
     } catch (err) {

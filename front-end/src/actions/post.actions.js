@@ -2,6 +2,7 @@ import axios from "axios";
 
 // posts
 export const GET_POSTS = "GET_POSTS";
+export const ADD_POST = "ADD_POST";
 export const LIKE_POST = "LIKE_POST";
 export const UNLIKE_POST = "UNLIKE_POST";
 export const POST_ERROR = "POST_ERROR"; // action pour gérer les erreurs
@@ -31,6 +32,28 @@ export const getPosts = (num) => async (dispatch) => {
         }
     } catch (err) {
         console.error("Erreur getPosts:", err);
+        dispatch({ type: POST_ERROR, payload: err.message });
+    }
+};
+
+// add post
+export const addPost = (data) => async (dispatch) => {
+    try {
+        const res = await axios.post(
+            `${import.meta.env.VITE_API_URL}/api/post/`,
+            data,
+            { withCredentials: true } // ⚠️ si ton backend utilise auth/session
+        );
+
+        // dispatch vers le reducer avec la réponse
+        dispatch({
+            type: ADD_POST,
+            payload: res.data, // res.data = post créé
+        });
+
+        return res.data; // utile si tu veux utiliser .then() dans le composant
+    } catch (err) {
+        console.error("Erreur addPost:", err.response?.data || err.message);
         dispatch({ type: POST_ERROR, payload: err.message });
     }
 };

@@ -35,35 +35,6 @@ module.exports.checkUser = (req, res, next) => {
     });
 };
 
-// module.exports.checkUser = (req, res, next) => {
-//     res.locals.user = null; // Valeur par défaut
-//     req.userId = null; // ⚠️ définir par défaut
-
-//     const token = req.cookies.jwt;
-//     if (!token) return next();
-
-//     jwt.verify(token, process.env.TOKEN_SECRET, async (err, decodedToken) => {
-//         if (err) return next();
-
-//         try {
-//             const user = await UserModel.findById(decodedToken.id).select(
-//                 "-password"
-//             );
-//             if (user) {
-//                 res.locals.user = user;
-//                 req.userId = decodedToken.id; // ✅ ajouté ici
-//             }
-//         } catch (error) {
-//             console.error(
-//                 "Erreur lors de la récupération de l'utilisateur :",
-//                 error
-//             );
-//         }
-
-//         next();
-//     });
-// };
-
 /**
  * Middleware qui protège les routes privées :
  * - Vérifie que l'utilisateur possède un token valide

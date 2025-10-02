@@ -10,7 +10,7 @@ export const getUser = (uid) => async (dispatch) => {
     try {
         const res = await axios.get(
             // création d'action de récup utilisateur
-            `${import.meta.env.VITE_API_URI}/api/user/${uid}`,
+            `${import.meta.env.VITE_API_URL}/api/user/${uid}`,
             { withCredentials: true }
         );
         // les envoyer a reducer
@@ -23,11 +23,11 @@ export const uploadPicture = (data, id) => async (dispatch) => {
     try {
         //on envoi a la BDD
         await axios.post(
-            `${import.meta.env.VITE_API_URI}/api/user/upload`,
+            `${import.meta.env.VITE_API_URL}/api/user/upload`,
             data
         );
         const res = await axios.get(
-            `${import.meta.env.VITE_API_URI}/api/user/${id}`
+            `${import.meta.env.VITE_API_URL}/api/user/${id}`
         );
         dispatch({ type: UPLOAD_PICTURE, payload: res.data.picture });
     } catch (err) {
@@ -41,7 +41,7 @@ export const uploadPicture = (data, id) => async (dispatch) => {
 export const updateBio = (userId, bio) => async (dispatch) => {
     try {
         const res = await axios.put(
-            `${import.meta.env.VITE_API_URI}/api/user/${userId}`,
+            `${import.meta.env.VITE_API_URL}/api/user/${userId}`,
             { bio }
         );
         dispatch({ type: UPDATE_BIO, payload: bio });
@@ -52,7 +52,7 @@ export const updateBio = (userId, bio) => async (dispatch) => {
 export const followUser = (followId, idToFollow) => async (dispatch) => {
     try {
         await axios.patch(
-            `${import.meta.env.VITE_API_URI}/api/user/follow/${followId}`,
+            `${import.meta.env.VITE_API_URL}/api/user/follow/${followId}`,
             { idToFollow },
             { withCredentials: true } // si besoin des cookies
         );
@@ -64,7 +64,7 @@ export const followUser = (followId, idToFollow) => async (dispatch) => {
 export const unfollowUser = (followId, idToUnFollow) => async (dispatch) => {
     try {
         await axios.patch(
-            `${import.meta.env.VITE_API_URI}/api/user/unfollow/${followId}`,
+            `${import.meta.env.VITE_API_URL}/api/user/unfollow/${followId}`,
             { idToUnFollow },
             { withCredentials: true } // si besoin des cookies
         );
