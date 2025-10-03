@@ -13,6 +13,7 @@ function UpdateProfil() {
     const [updateForm, setUpdateForm] = useState(false);
     const [followingPopup, setFollowingPopup] = useState(false);
     const [followersPopup, setFollowersPopup] = useState(false);
+    const error = useSelector((state) => state.errorReducer.userError);
 
     const dispatch = useDispatch();
 
@@ -30,8 +31,10 @@ function UpdateProfil() {
             <div className="update-container">
                 <div className="left-part">
                     <h3>Photo de profil</h3>
-                    <img src={currentUser.picture} alt="user-pic" />
+                    <img src={user.picture || "/default.png"} alt="user-pic" />
                     <UploadImg />
+                    {error?.maxSize && <p>{error.maxSize}</p>}
+                    {error?.format && <p>{error.format}</p>}
                 </div>
                 <div className="right-part">
                     <div className="bio-update">

@@ -22,9 +22,9 @@ export const getUser = (uid) => async (dispatch) => {
         console.error("Erreur getUser:", err.response?.data || err.message);
     }
 };
+
 export const uploadPicture = (data, id) => async (dispatch) => {
     try {
-        //on envoi a la BDD
         await axios.post(
             `${import.meta.env.VITE_API_URL}/api/user/upload`,
             data
@@ -33,20 +33,26 @@ export const uploadPicture = (data, id) => async (dispatch) => {
         const res = await axios.get(
             `${import.meta.env.VITE_API_URL}/api/user/${id}`
         );
+
         if (res.data.errors) {
-            dispatch({ type: USER_ERRORS, payload: "" });
-        } else {
+            // envoie les erreurs dans Redux
             dispatch({ type: USER_ERRORS, payload: res.data.errors });
+        } else {
+            // vide les erreurs si tout va bien
+            dispatch({ type: USER_ERRORS, payload: "" });
+            dispatch({ type: UPLOAD_PICTURE, payload: res.data.picture });
         }
-        dispatch({ type: UPLOAD_PICTURE, payload: res.data.picture });
     } catch (err) {
         console.error(
             "Erreur uploadPicture:",
             err.response?.data || err.message
         );
+        dispatch({
+            type: USER_ERRORS,
+            payload: err.response?.data || err.message,
+        });
     }
 };
-
 export const updateBio = (userId, bio) => async (dispatch) => {
     try {
         const res = await axios.put(

@@ -15,7 +15,8 @@ export const EDIT_COMMENT = "EDIT_COMMENT";
 export const DELETE_COMMENT = "DELETE_COMMENT";
 
 // errors
-export const POST_ERROR = "POST_ERROR"; // action pour gérer les erreurs
+export const POST_ERROR = "POST_ERROR"; // action pour gérer les erreurs post
+export const USER_ERROR = "USER_ERROR"; // action pour gérer les erreurs user
 
 // Récupération des posts
 export const getPosts = (num) => async (dispatch) => {
