@@ -5,7 +5,7 @@ const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
-
+const path = require("path");
 // Modules locaux:
 const userRoutes = require("../back-end/routes/user.routes");
 const postRoutes = require("../back-end/routes/post.routes");
@@ -30,6 +30,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/user", userRoutes);
 app.use("/api/post", postRoutes);
 
+// servir les fichiers du dossier uploads
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 mongoose
     .connect(process.env.MONGO_URI)
     .then(() => console.log("Connexion à MongoDB Atlas réussie ✅ !"))
