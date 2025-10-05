@@ -2,6 +2,8 @@ import axios from "axios";
 
 // posts
 export const GET_POSTS = "GET_POSTS";
+export const GET_ALL_POSTS = "GET_ALL_POSTS";
+
 export const ADD_POST = "ADD_POST";
 export const LIKE_POST = "LIKE_POST";
 export const UNLIKE_POST = "UNLIKE_POST";
@@ -28,6 +30,7 @@ export const getPosts = (num) => async (dispatch) => {
         if (res.status === 200 && Array.isArray(res.data)) {
             const array = res.data.slice(0, num);
             dispatch({ type: GET_POSTS, payload: array });
+            dispatch({ type: GET_ALL_POSTS, payload: res.data });
         } else {
             dispatch({
                 type: POST_ERROR,
@@ -79,7 +82,7 @@ export const likePost = (postId, userId) => async (dispatch) => {
             });
         }
     } catch (err) {
-        console.error("Erreur addPost:", err.response?.data || err.message);
+        console.error("Erreur likePost:", err.response?.data || err.message);
 
         // Envoie l’erreur dans Redux
         dispatch({ type: POST_ERROR, payload: err.message });
@@ -110,6 +113,9 @@ export const unlikePost = (postId, userId) => async (dispatch) => {
     } catch (err) {
         console.error("Erreur unlikePost:", err);
         dispatch({ type: POST_ERROR, payload: err.message });
+        setTimeout(() => {
+            dispatch({ type: POST_ERROR, payload: "" });
+        }, 3000);
     }
 };
 // mettre à jour post
@@ -199,7 +205,7 @@ export const editComment = (postId, commentId, text) => async (dispatch) => {
 // Supprimer un commentaire
 export const deleteComment = (postId, commentId) => async (dispatch) => {
     try {
-        await axios.patch(
+        await axios.delete(
             `${
                 import.meta.env.VITE_API_URL
             }/api/post/delete-comment-post/${postId}`,

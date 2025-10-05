@@ -9,6 +9,8 @@ import { getUsers } from "./actions/users.action.js";
 
 // Dispatch initial pour récupérer tous les utilisateurs
 store.dispatch(getUsers());
+// dispatch pour recuprer tout les postes
+store.dispatch(getAllPosts());
 
 createRoot(document.getElementById("root")).render(
     <Provider store={store}>
