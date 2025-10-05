@@ -4,6 +4,7 @@ import Thread from "../components/Thread";
 import { UidContext } from "../components/AppContext";
 import NewPostForm from "../components/Post/NewPostForm";
 import Log from "../components/Log";
+import Trends from "../components/Trends";
 
 function Home() {
     const uid = useContext(UidContext);

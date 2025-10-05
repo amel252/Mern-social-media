@@ -6,11 +6,12 @@ import { Provider } from "react-redux";
 import store from "./redux/Store.js";
 import { BrowserRouter } from "react-router-dom";
 import { getUsers } from "./actions/users.action.js";
+import { getPosts } from "./actions/post.actions";
 
 // Dispatch initial pour récupérer tous les utilisateurs
 store.dispatch(getUsers());
 // dispatch pour recuprer tout les postes
-store.dispatch(getAllPosts());
+store.dispatch(getPosts());
 
 createRoot(document.getElementById("root")).render(
     <Provider store={store}>

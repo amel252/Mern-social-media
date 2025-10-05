@@ -16,6 +16,9 @@ export const ADD_COMMENT = "ADD_COMMENT";
 export const EDIT_COMMENT = "EDIT_COMMENT";
 export const DELETE_COMMENT = "DELETE_COMMENT";
 
+// trends
+export const GET_TRENDS = "GET_TRENDS";
+
 // errors
 export const POST_ERROR = "POST_ERROR"; // action pour gérer les erreurs post
 export const USER_ERROR = "USER_ERROR"; // action pour gérer les erreurs user
@@ -220,4 +223,9 @@ export const deleteComment = (postId, commentId) => async (dispatch) => {
         console.error("Erreur lors de la suppression du commentaire :", error);
         dispatch({ type: POST_ERROR, payload: error.message });
     }
+};
+export const getTrends = (sortedArray) => {
+    return (dispatch) => {
+        dispatch({ type: GET_TRENDS, payload: sortedArray });
+    };
 };
