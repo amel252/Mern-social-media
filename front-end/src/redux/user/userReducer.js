@@ -6,7 +6,15 @@ import {
     UNFOLLOW_USER,
 } from "../../actions/user.actions";
 
-const initialState = {};
+const initialState = {
+    // Si tu sais que userData doit toujours avoir certaines clés, tu peux mettre un initialState plus complet
+    _id: null,
+    pseudo: "",
+    bio: "",
+    picture: "",
+    following: [],
+    followers: [],
+};
 
 export default function userReducer(state = initialState, action) {
     switch (action.type) {

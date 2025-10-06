@@ -14,15 +14,19 @@ const App = () => {
         const fetchUser = async () => {
             try {
                 const res = await axios.get(
-                    `${import.meta.env.VITE_API_URI}/api/user/current-user`,
+                    `${import.meta.env.VITE_API_URL}/api/user/current-user`,
                     { withCredentials: true }
                 );
 
-                if (res.data.uid) {
-                    setUid(res.data.uid); // Stocke l'ID utilisateur
-                } else {
-                    setUid(null); // Pas d'utilisateur connecté
-                }
+                // if (res.data.uid) {
+                //     setUid(res.data.uid); // Stocke l'ID utilisateur
+                // } else {
+                //     setUid(null); // Pas d'utilisateur connecté
+                // }
+
+                // Prend en compte plusieurs structures possibles
+                const userId = res.data?.uid || res.data?.user?._id || null;
+                setUid(userId);
             } catch (error) {
                 console.error(
                     "Erreur lors de la récupération de l'utilisateur :",

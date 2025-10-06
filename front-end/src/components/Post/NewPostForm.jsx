@@ -102,7 +102,7 @@ const NewPostForm = () => {
                     </div>
                     <NavLink to={"/profil"}>
                         <div className="user-info">
-                            <img src={userData.picture} alt="user-img" />
+                            <img src={userData?.picture} alt="user-img" />
                         </div>
                     </NavLink>
                     <div className="post-form">
@@ -129,7 +129,7 @@ const NewPostForm = () => {
                                 </div>
                                 <div className="content">
                                     <p>{message}</p>
-                                    <img src={postPicture} alt="" />
+                                    <img src={postPicture} alt="post" />
                                     {video && (
                                         <iframe
                                             src={video}
