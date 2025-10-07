@@ -102,7 +102,12 @@ const NewPostForm = () => {
                     </div>
                     <NavLink to={"/profil"}>
                         <div className="user-info">
-                            <img src={userData?.picture} alt="user-img" />
+                            {postPicture && (
+                                <img
+                                    src={postPicture || "/default-image.png"}
+                                    alt=""
+                                />
+                            )}
                         </div>
                     </NavLink>
                     <div className="post-form">

@@ -11,6 +11,7 @@ function UpdateProfil() {
     const usersData = useSelector((state) => state.users); // tous les utilisateurs
     const [bio, setBio] = useState(currentUser?.bio || "");
     const [updateForm, setUpdateForm] = useState(false);
+
     const [followingPopup, setFollowingPopup] = useState(false);
     const [followersPopup, setFollowersPopup] = useState(false);
     const error = useSelector((state) => state.errorReducer.userError);

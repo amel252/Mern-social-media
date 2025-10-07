@@ -25,7 +25,7 @@ const FollowHandler = ({ idToFollow, type }) => {
         dispatch(unfollowUser(currentUser._id, idToFollow));
         setIsFollowed(false);
     };
-
+    console.log("FollowHandler props:", { idToFollow, type });
     if (!currentUser) return null;
 
     const btnClass =

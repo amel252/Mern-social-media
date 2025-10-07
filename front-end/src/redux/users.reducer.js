@@ -4,7 +4,7 @@ import {
     GET_USERS_START,
 } from "../actions/users.action";
 
-const initialState = {};
+const initialState = [];
 
 export default function usersReducer(state = initialState, action) {
     switch (action.type) {
